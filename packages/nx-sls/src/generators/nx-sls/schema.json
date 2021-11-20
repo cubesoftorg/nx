@@ -23,6 +23,11 @@
       "type": "string",
       "description": "A directory where the project is placed",
       "alias": "d"
+    },
+    "region": {
+      "type": "string",
+      "description": "The AWS region to deploy the serverless functions",
+      "alias": "r"
     }
   },
   "required": ["name"]

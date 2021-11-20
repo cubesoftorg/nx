@@ -1,0 +1,30 @@
+service: <%= projectName %>
+frameworkVersion: '>=2.0.0'
+plugins:
+  - serverless-offline
+
+package:
+  individually: true
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  stage: ${opt:stage, 'test'}
+  region: <%= region %>
+  runtime: nodejs14.x
+  endpointType: regional
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+
+functions:
+  hello:
+    handler: src/handlers/handler
+    events:
+      - httpApi:
+          path: /hello
+          method: GET

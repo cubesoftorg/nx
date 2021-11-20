@@ -1,5 +1,6 @@
 export interface NxSlsGeneratorSchema {
-  name: string;
-  tags?: string;
-  directory?: string;
+    name: string;
+    region: string;
+    tags?: string;
+    directory?: string;
 }
