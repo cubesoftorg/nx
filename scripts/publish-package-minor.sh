@@ -20,6 +20,6 @@ cd $BASEDIR/../
 nx build $PACKAGE
 
 cd $BASEDIR/../dist/packages/$PACKAGE
-npm version minor --force && npm publish --access=public
+npm publish --access=public
 
 cd $PWDDIR
