@@ -3,4 +3,5 @@ export interface NxSlsGeneratorSchema {
     region: string;
     tags?: string;
     directory?: string;
+    unitTestRunner?: string;
 }

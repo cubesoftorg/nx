@@ -12,6 +12,7 @@ provider:
   stage: ${opt:stage, 'test'}
   region: <%= region %>
   runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
   endpointType: regional
   httpApi:
     cors:
@@ -22,9 +23,9 @@ provider:
     STAGE: ${self:provider.stage}
 
 functions:
-  hello:
-    handler: src/handlers/handler
+  handler:
+    handler: src/handlers/handler.handler
     events:
       - httpApi:
-          path: /hello
+          path: /handler
           method: GET

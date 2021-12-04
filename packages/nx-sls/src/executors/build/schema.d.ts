@@ -1,1 +1,8 @@
-export interface BuildExecutorSchema {} // eslint-disable-line
+import { Platform } from 'esbuild';
+
+export interface BuildExecutorSchema {
+    outputPath: string;
+    tsConfig: string;
+    platform: Platform;
+    target: string;
+}

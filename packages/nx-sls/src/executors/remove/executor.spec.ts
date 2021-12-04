@@ -21,7 +21,7 @@ const context: ExecutorContext = {
     }
 };
 
-describe('Build Executor', () => {
+describe('Remove Executor', () => {
     it('can run', async () => {
         const output = await executor(options, context);
         expect(output.success).toBe(true);

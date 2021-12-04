@@ -4,6 +4,23 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "description": "The output path of the generated files."
+    },
+    "tsConfig": {
+      "type": "string",
+      "description": "The path to the tsconfig file."
+    },
+    "platform": {
+      "type": "string",
+      "description": "The platform for esbuild."
+    },
+    "target": {
+      "type": "string",
+      "description": "The node version for esbuild."
+    }
+  },
   "required": []
 }
