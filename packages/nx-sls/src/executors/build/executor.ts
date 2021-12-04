@@ -39,11 +39,17 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         devDependencies: {}
     });
     const result = await depcheck(resolve(context.root, options.outputPath), {});
-    const dependencies = result.dependencies.reduce((prev, curr) => {
+    const dependencies = [
+        ...result.dependencies,
+        ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.dependencies).includes(m))
+    ].reduce((prev, curr) => {
         prev[curr] = getPackageVersion(context.root, curr);
         return { ...prev };
     }, {});
-    const devDependencies = [...result.devDependencies, ...Object.keys(result.missing)].reduce((prev, curr) => {
+    const devDependencies = [
+        ...result.devDependencies,
+        ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.devDependencies).includes(m))
+    ].reduce((prev, curr) => {
         prev[curr] = getPackageVersion(context.root, curr);
         return { ...prev };
     }, {});
