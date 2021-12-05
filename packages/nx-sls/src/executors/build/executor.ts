@@ -1,6 +1,7 @@
 import depcheck from 'depcheck';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
+import { existsSync } from 'fs';
 import { basename, resolve } from 'path';
 
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
@@ -47,15 +48,13 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         ...result.dependencies,
         ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.dependencies).includes(m))
     ].reduce((prev, curr) => {
-        prev[curr] = getPackageVersion(context.root, curr);
-        return { ...prev };
+        return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
     }, {});
     const devDependencies = [
         ...result.devDependencies,
         ...Object.keys(result.missing).filter((m) => !Object.keys(packageJson.dependencies).includes(m))
     ].reduce((prev, curr) => {
-        prev[curr] = getPackageVersion(context.root, curr);
-        return { ...prev };
+        return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
     }, {});
     writeJsonFile(buildPackageJson, {
         name: packageJson.name,
@@ -91,6 +90,20 @@ async function copyAssets(options: BuildExecutorSchema, context: ExecutorContext
     );
 }
 
-function getPackageVersion(projectRoot: string, packageName: string): string {
-    return readJsonFile(resolve(projectRoot, 'node_modules', packageName, 'package.json')).version;
+function resolvePackageJsonEntry(projectRoot: string, packageName: string): { [packageName: string]: string } {
+    if (existsSync(resolve(projectRoot, 'node_modules', packageName, 'package.json'))) {
+        // Try to resolve dependency from package
+        return {
+            [packageName]: readJsonFile(resolve(projectRoot, 'node_modules', packageName, 'package.json')).version
+        };
+    }
+    if (existsSync(resolve(projectRoot, 'node_modules', '@types', packageName, 'package.json'))) {
+        // Try to resolve dependency from type package
+        return {
+            ['@types/' + packageName]: readJsonFile(
+                resolve(projectRoot, 'node_modules', '@types', packageName, 'package.json')
+            ).version
+        };
+    }
+    return { [packageName]: '*' };
 }
