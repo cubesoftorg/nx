@@ -11,6 +11,10 @@ import { getAbsoluteAppRoot, getAppSrcRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
 import { BuildExecutorSchema } from './schema';
 
+interface PackageJsonDependencies {
+    [packageName: string]: string;
+}
+
 export default async function buildExecuter(options: BuildExecutorSchema, context: ExecutorContext) {
     try {
         await copyAssets(options, context);
@@ -34,6 +38,42 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         copyFile(file, resolve(context.root, options.outputPath, '.tmp', basename(file)));
     }
 
+    // Install packages to generate a package-lock.json file
+    await runCommand('npm', ['install', '--production'], {
+        cwd: resolve(context.root, options.outputPath)
+    });
+
+    const { dependencies, devDependencies } = await resolveDependencies(options, context);
+
+    // Build all serverless handler files via esbuild
+    return esbuild({
+        entryPoints,
+        bundle: true,
+        format: 'cjs',
+        legalComments: 'none',
+        minify: true,
+        platform: options.platform,
+        target: options.target,
+        external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
+        outdir: resolve(context.root, options.outputPath, 'src/handlers/'),
+        tsconfig: resolve(context.root, options.tsConfig)
+    });
+}
+
+async function copyAssets(options: BuildExecutorSchema, context: ExecutorContext) {
+    return copyFile(
+        `${getAbsoluteAppRoot(context)}/serverless.yml`,
+        `${resolve(context.root, options.outputPath)}/serverless.yml`
+    );
+}
+
+async function resolveDependencies(
+    options: BuildExecutorSchema,
+    context: ExecutorContext
+): Promise<{
+    dependencies: PackageJsonDependencies;
+    devDependencies: PackageJsonDependencies;
+}> {
     // Resolve all necessary npm packages and versions and write a new package.json file
     const packageJson = readJsonFile(resolve(context.root, 'package.json'));
     const buildPackageJson = resolve(context.root, options.outputPath, 'package.json');
@@ -62,35 +102,10 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         dependencies,
         devDependencies
     });
-
-    // Install packages to generate a package-lock.json file
-    await runCommand('npm', ['install', '--production'], {
-        cwd: resolve(context.root, options.outputPath)
-    });
-
-    // Build all serverless handler files via esbuild
-    return esbuild({
-        entryPoints,
-        bundle: true,
-        format: 'cjs',
-        legalComments: 'none',
-        minify: true,
-        platform: options.platform,
-        target: options.target,
-        external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
-        outdir: resolve(context.root, options.outputPath, 'src/handlers/'),
-        tsconfig: resolve(context.root, options.tsConfig)
-    });
+    return { dependencies, devDependencies };
 }
 
-async function copyAssets(options: BuildExecutorSchema, context: ExecutorContext) {
-    return copyFile(
-        `${getAbsoluteAppRoot(context)}/serverless.yml`,
-        `${resolve(context.root, options.outputPath)}/serverless.yml`
-    );
-}
-
-function resolvePackageJsonEntry(projectRoot: string, packageName: string): { [packageName: string]: string } {
+function resolvePackageJsonEntry(projectRoot: string, packageName: string): PackageJsonDependencies {
     if (existsSync(resolve(projectRoot, 'node_modules', packageName, 'package.json'))) {
         // Try to resolve dependency from package
         return {
