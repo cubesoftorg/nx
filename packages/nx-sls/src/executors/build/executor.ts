@@ -52,7 +52,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     }, {});
     const devDependencies = [
         ...result.devDependencies,
-        ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.devDependencies).includes(m))
+        ...Object.keys(result.missing).filter((m) => !Object.keys(packageJson.dependencies).includes(m))
     ].reduce((prev, curr) => {
         prev[curr] = getPackageVersion(context.root, curr);
         return { ...prev };
