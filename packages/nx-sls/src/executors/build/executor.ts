@@ -1,7 +1,7 @@
 import depcheck from 'depcheck';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
-import { resolve } from 'path';
+import { basename, resolve } from 'path';
 
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 
@@ -28,6 +28,10 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     const entryPoints = (await glob(`${getAppSrcRoot(context)}/handlers/**/*.ts`)).map((entry) =>
         resolve(context.root, entry)
     );
+
+    for (const file of entryPoints) {
+        copyFile(file, resolve(context.root, options.outputPath, '.tmp', basename(file)));
+    }
 
     // Resolve all necessary npm packages and versions and write a new package.json file
     const packageJson = readJsonFile(resolve(context.root, 'package.json'));
@@ -74,7 +78,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         minify: true,
         platform: options.platform,
         target: options.target,
-        external: [...result.dependencies, ...result.devDependencies],
+        external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
         outdir: resolve(context.root, options.outputPath, 'src/handlers/'),
         tsconfig: resolve(context.root, options.tsConfig)
     });

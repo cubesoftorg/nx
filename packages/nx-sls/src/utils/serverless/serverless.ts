@@ -21,7 +21,7 @@ export class Serverless {
     }
 
     async run(command: ServerlessCommand, args: string[] = []) {
-        runCommand(resolve(this.config.workspaceRoot, 'node_modules', '.bin', 'sls'), [command, ...args], {
+        return runCommand(resolve(this.config.workspaceRoot, 'node_modules', '.bin', 'sls'), [command, ...args], {
             cwd: this.config.cwd,
             stdio: 'inherit'
         });
