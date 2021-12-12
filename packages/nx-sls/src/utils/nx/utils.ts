@@ -13,3 +13,7 @@ export function getAbsoluteAppRoot(context: ExecutorContext) {
 export function getAppSrcRoot(context: ExecutorContext) {
     return context.workspace.projects[context.projectName].sourceRoot;
 }
+
+export function getAbsoluteBuildRoot(context: ExecutorContext) {
+    return resolve(context.root, 'node_modules', '.cache', context.projectName);
+}

@@ -6,8 +6,8 @@ import { basename, resolve } from 'path';
 
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 
-import { copyFile } from '../../utils/file-utils';
-import { getAbsoluteAppRoot, getAppSrcRoot } from '../../utils/nx/utils';
+import { copyDirectory, copyFile, deleteDirectory } from '../../utils/file-utils';
+import { getAbsoluteAppRoot, getAbsoluteBuildRoot, getAppSrcRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
 import { BuildExecutorSchema } from './schema';
 
@@ -18,6 +18,7 @@ interface PackageJsonDependencies {
 export default async function buildExecuter(options: BuildExecutorSchema, context: ExecutorContext) {
     try {
         await copyAssets(options, context);
+        await handleFileReplacements(options, context);
         await build(options, context);
     } catch (error) {
         throw new Error(error);
@@ -29,6 +30,8 @@ export default async function buildExecuter(options: BuildExecutorSchema, contex
 }
 
 async function build(options: BuildExecutorSchema, context: ExecutorContext) {
+    await deleteDirectory(getAbsoluteBuildRoot(context));
+    await copyDirectory();
     // Get all serverless handler as entry points for esbuild
     const entryPoints = (await glob(`${getAppSrcRoot(context)}/handlers/**/*.ts`)).map((entry) =>
         resolve(context.root, entry)
@@ -65,6 +68,15 @@ async function copyAssets(options: BuildExecutorSchema, context: ExecutorContext
         `${getAbsoluteAppRoot(context)}/serverless.yml`,
         `${resolve(context.root, options.outputPath)}/serverless.yml`
     );
+}
+
+async function handleFileReplacements(options: BuildExecutorSchema, context: ExecutorContext) {
+    const fileReplacements = context.target?.configurations?.[context.configurationName]?.fileReplacements;
+    if (fileReplacements) {
+        for (const fileReplacement of fileReplacements) {
+            await copyFile(fileReplacement.with, fileReplacement.replace);
+        }
+    }
 }
 
 async function resolveDependencies(

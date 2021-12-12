@@ -90,6 +90,17 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
                     tsConfig: `${normalizedOptions.projectRoot}/tsconfig.app.json`,
                     platform: 'node',
                     target: 'node14'
+                },
+                configurations: {
+                    development: {},
+                    production: {
+                        fileReplacements: [
+                            {
+                                replace: `${normalizedOptions.projectRoot}/src/environments/environment.ts`,
+                                with: `${normalizedOptions.projectRoot}/src/environments/environment.prod.ts`
+                            }
+                        ]
+                    }
                 }
             },
             deploy: {
