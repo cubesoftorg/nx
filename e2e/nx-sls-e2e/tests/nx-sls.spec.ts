@@ -1,4 +1,4 @@
-import { checkFilesExist, ensureNxProject, readJson, runNxCommandAsync, uniq } from '@nrwl/nx-plugin/testing';
+import { checkFilesExist, ensureNxProject, readFile, readJson, runNxCommandAsync, uniq } from '@nrwl/nx-plugin/testing';
 
 describe('nx-sls e2e', () => {
     it('should create nx-sls', async () => {
@@ -36,6 +36,16 @@ describe('nx-sls e2e', () => {
             await runNxCommandAsync(`generate @cubesoft/nx-sls:nx-sls ${plugin} --region us-east-1`);
             await runNxCommandAsync(`build ${plugin}`);
             expect(() => checkFilesExist(`dist/apps/${plugin}/src/handlers/handler.js`)).not.toThrow();
+        }, 120000);
+
+        it('should build nx-sls with production configuration', async () => {
+            const plugin = uniq('nx-sls');
+            ensureNxProject('@cubesoft/nx-sls', 'dist/packages/nx-sls');
+            await runNxCommandAsync(`generate @cubesoft/nx-sls:nx-sls ${plugin} --region us-east-1`);
+            await runNxCommandAsync(`build ${plugin} --configuration=production`);
+            expect(readFile(`node_modules/.cache/${plugin}/src/environments/environment.ts`)).toContain(
+                'production: true'
+            );
         }, 120000);
 
         it('should deploy nx-sls', async () => {

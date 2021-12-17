@@ -1,17 +1,16 @@
-import * as path from 'path';
-
 import {
+    GeneratorCallback,
+    Tree,
     addDependenciesToPackageJson,
     addProjectConfiguration,
     formatFiles,
     generateFiles,
-    GeneratorCallback,
     getWorkspaceLayout,
     names,
-    offsetFromRoot,
-    Tree
+    offsetFromRoot
 } from '@nrwl/devkit';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
+import { join } from 'path';
 
 import {
     awsLambdaTypesVersion,
@@ -58,7 +57,7 @@ function addFiles(tree: Tree, options: NormalizedSchema) {
         offsetFromRoot: offsetFromRoot(options.projectRoot),
         template: ''
     };
-    generateFiles(tree, path.join(__dirname, 'files'), options.projectRoot, templateOptions);
+    generateFiles(tree, join(__dirname, 'files'), options.projectRoot, templateOptions);
 }
 
 // Add package dependencies
@@ -87,7 +86,7 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
                 executor: '@cubesoft/nx-sls:build',
                 options: {
                     outputPath: `dist/${normalizedOptions.projectRoot}`,
-                    tsConfig: `${normalizedOptions.projectRoot}/tsconfig.app.json`,
+                    tsConfig: `tsconfig.app.json`,
                     platform: 'node',
                     target: 'node14'
                 },
@@ -109,10 +108,25 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
                     outputPath: `dist/${normalizedOptions.projectRoot}`
                 }
             },
+            lint: {
+                executor: '@nrwl/linter:lint',
+                options: {
+                    linter: 'eslint',
+                    tsConfig: [`${normalizedOptions.projectRoot}/tsconfig.app.json`],
+                    exclude: ['**/node_modules/**', `!${normalizedOptions.projectRoot}/**/*`]
+                }
+            },
             remove: {
                 executor: '@cubesoft/nx-sls:remove',
                 options: {
                     outputPath: `dist/${normalizedOptions.projectRoot}`
+                }
+            },
+            test: {
+                executor: '@nrwl/jest:jest',
+                options: {
+                    jestConfig: `${normalizedOptions.projectRoot}/jest.config.js`,
+                    passWithNoTests: true
                 }
             }
         },

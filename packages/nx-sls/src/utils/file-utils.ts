@@ -58,5 +58,8 @@ export async function copyDirectory(src: PathLike, dest: PathLike) {
 }
 
 export async function deleteDirectory(path: PathLike) {
-    fs.rmdir(path, { recursive: true });
+    if (await exists(path)) {
+        return fs.rmdir(path, { recursive: true });
+    }
+    return;
 }
