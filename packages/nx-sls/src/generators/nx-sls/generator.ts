@@ -10,7 +10,7 @@ import {
     offsetFromRoot
 } from '@nrwl/devkit';
 import { jestProjectGenerator } from '@nrwl/jest';
-import { lintProjectGenerator } from '@nrwl/linter';
+import { Linter, lintProjectGenerator } from '@nrwl/linter';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 import { join } from 'path';
 
@@ -124,7 +124,7 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
     tasks.push(addJestPlugin(tree));
     tasks.push(addLinterPlugin(tree));
     tasks.push(addDependencies(tree));
-    await lintProjectGenerator(tree, { project: options.name, skipFormat: true });
+    await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint });
     await jestProjectGenerator(tree, { project: options.name, setupFile: 'none', skipSerializers: true });
     await formatFiles(tree);
     return runTasksInSerial(...tasks);
