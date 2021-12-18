@@ -1,4 +1,4 @@
-import { addDependenciesToPackageJson, GeneratorCallback, Tree } from '@nrwl/devkit';
+import { GeneratorCallback, Tree, addDependenciesToPackageJson } from '@nrwl/devkit';
 import { jestInitGenerator } from '@nrwl/jest';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 
@@ -10,7 +10,6 @@ export function addJestPlugin(tree: Tree): GeneratorCallback {
 
     if (!hasNrwlJestDependency) {
         const nxVersion = readNxVersion(tree);
-
         const installTask = addDependenciesToPackageJson(tree, {}, { '@nrwl/jest': nxVersion });
         tasks.push(installTask);
     }

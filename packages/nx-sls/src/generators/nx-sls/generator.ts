@@ -9,6 +9,8 @@ import {
     names,
     offsetFromRoot
 } from '@nrwl/devkit';
+import { jestProjectGenerator } from '@nrwl/jest';
+import { lintProjectGenerator } from '@nrwl/linter';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 import { join } from 'path';
 
@@ -133,11 +135,12 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
-    await formatFiles(tree);
-    if (!options.unitTestRunner || options.unitTestRunner === 'jest') {
-        tasks.push(addJestPlugin(tree));
-    }
+
+    tasks.push(addJestPlugin(tree));
     tasks.push(addLinterPlugin(tree));
     tasks.push(addDependencies(tree));
+    await lintProjectGenerator(tree, { project: options.name, skipFormat: true });
+    await jestProjectGenerator(tree, { project: options.name, setupFile: 'none', skipSerializers: true });
+    await formatFiles(tree);
     return runTasksInSerial(...tasks);
 }
