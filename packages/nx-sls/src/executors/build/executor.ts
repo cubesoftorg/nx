@@ -3,20 +3,16 @@ import depcheck from 'depcheck';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
 import { existsSync } from 'fs';
-import { basename, resolve } from 'path';
+import { resolve } from 'path';
 
-import { copyDirectory, copyFile, deleteDirectory } from '../../utils/file-utils';
-import { getAbsoluteAppRoot, getAbsoluteBuildRoot, getAppSrcRoot } from '../../utils/nx/utils';
+import { copyFile } from '../../utils/file-utils';
+import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
+import { esbuildReplaceFilePlugin } from './esbuild.replace';
 import { BuildExecutorSchema } from './schema';
 
 interface PackageJsonDependencies {
     [packageName: string]: string;
-}
-
-interface FileReplacement {
-    replace: string;
-    with: string;
 }
 
 export default async function buildExecuter(options: BuildExecutorSchema, context: ExecutorContext) {
@@ -32,12 +28,11 @@ export default async function buildExecuter(options: BuildExecutorSchema, contex
 }
 
 async function build(options: BuildExecutorSchema, context: ExecutorContext) {
-    const buildRoot = getAbsoluteBuildRoot(context);
-    await deleteDirectory(buildRoot);
-    await copyDirectory(getAbsoluteAppRoot(context), buildRoot);
-    await handleFileReplacements(options, context);
+    const appRoot = getAbsoluteAppRoot(context);
+    const outputRoot = getAbsoluteOutputRoot(context);
+
     // Get all serverless handler as entry points for esbuild
-    const entryPoints = (await glob(`${buildRoot}/src/handlers/**/*.ts`)).map((entry) => resolve(buildRoot, entry));
+    const entryPoints = (await glob(`${appRoot}/src/handlers/**/*.ts`)).map((entry) => resolve(appRoot, entry));
 
     const { dependencies, devDependencies } = await resolveDependencies(options, context);
 
@@ -51,39 +46,21 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         platform: options.platform,
         target: options.target,
         external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
-        outdir: resolve(context.root, options.outputPath, 'src/handlers/'),
-        tsconfig: resolve(buildRoot, options.tsConfig)
+        outdir: resolve(outputRoot, 'src/handlers/'),
+        tsconfig: resolve(appRoot, options.tsConfig),
+        plugins: [esbuildReplaceFilePlugin(options, context)]
     });
 
     // Install packages to generate a package-lock.json file
     await runCommand('npm', ['install', '--production'], {
-        cwd: resolve(context.root, options.outputPath)
+        cwd: resolve(outputRoot)
     });
 
-    await copyFile(resolve(buildRoot, 'serverless.yml'), resolve(context.root, options.outputPath, 'serverless.yml'));
+    await copyFile(resolve(appRoot, 'serverless.yml'), resolve(outputRoot, 'serverless.yml'));
 
     return {
         success: true
     };
-}
-
-async function handleFileReplacements(options: BuildExecutorSchema, context: ExecutorContext) {
-    const fileReplacements = context.target?.configurations?.[context.configurationName]
-        ?.fileReplacements as FileReplacement[];
-    if (fileReplacements) {
-        for (const fileReplacement of fileReplacements) {
-            await copyFile(
-                resolve(context.root, fileReplacement.with),
-                resolve(
-                    context.root,
-                    fileReplacement.replace.replace(
-                        getAppSrcRoot(context),
-                        resolve(getAbsoluteBuildRoot(context), 'src')
-                    )
-                )
-            );
-        }
-    }
 }
 
 async function resolveDependencies(
@@ -93,18 +70,18 @@ async function resolveDependencies(
     dependencies: PackageJsonDependencies;
     devDependencies: PackageJsonDependencies;
 }> {
-    const buildRoot = getAbsoluteBuildRoot(context);
+    const outputRoot = getAbsoluteOutputRoot(context);
     // Resolve all necessary npm packages and versions and write a new package.json file
     const packageJson = readJsonFile(resolve(context.root, 'package.json'));
-    const buildPackageJson = resolve(buildRoot, 'package.json');
-    const outPackageJson = resolve(context.root, options.outputPath, 'package.json');
+    const buildPackageJson = resolve(outputRoot, 'package.json');
+    const outPackageJson = resolve(outputRoot, 'package.json');
     writeJsonFile(buildPackageJson, {
         name: packageJson.name,
         version: packageJson.version,
         dependencies: {},
         devDependencies: {}
     });
-    const result = await depcheck(resolve(buildRoot), {});
+    const result = await depcheck(outputRoot, {});
     const dependencies = [
         ...result.dependencies,
         ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.dependencies).includes(m))

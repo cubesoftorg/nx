@@ -38,16 +38,6 @@ describe('nx-sls e2e', () => {
             expect(() => checkFilesExist(`dist/apps/${plugin}/src/handlers/handler.js`)).not.toThrow();
         }, 120000);
 
-        it('should build nx-sls with production configuration', async () => {
-            const plugin = uniq('nx-sls');
-            ensureNxProject('@cubesoft/nx-sls', 'dist/packages/nx-sls');
-            await runNxCommandAsync(`generate @cubesoft/nx-sls:nx-sls ${plugin} --region us-east-1`);
-            await runNxCommandAsync(`build ${plugin} --configuration=production`);
-            expect(readFile(`node_modules/.cache/${plugin}/src/environments/environment.ts`)).toContain(
-                'production: true'
-            );
-        }, 120000);
-
         it('should deploy nx-sls', async () => {
             const plugin = uniq('nx-sls');
             ensureNxProject('@cubesoft/nx-sls', 'dist/packages/nx-sls');
