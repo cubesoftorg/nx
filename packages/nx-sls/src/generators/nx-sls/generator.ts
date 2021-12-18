@@ -110,25 +110,10 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
                     outputPath: `dist/${normalizedOptions.projectRoot}`
                 }
             },
-            lint: {
-                executor: '@nrwl/linter:lint',
-                options: {
-                    linter: 'eslint',
-                    tsConfig: [`${normalizedOptions.projectRoot}/tsconfig.app.json`],
-                    exclude: ['**/node_modules/**', `!${normalizedOptions.projectRoot}/**/*`]
-                }
-            },
             remove: {
                 executor: '@cubesoft/nx-sls:remove',
                 options: {
                     outputPath: `dist/${normalizedOptions.projectRoot}`
-                }
-            },
-            test: {
-                executor: '@nrwl/jest:jest',
-                options: {
-                    jestConfig: `${normalizedOptions.projectRoot}/jest.config.js`,
-                    passWithNoTests: true
                 }
             }
         },
