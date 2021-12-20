@@ -34,7 +34,12 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     const outputRoot = getAbsoluteOutputRoot(context);
 
     // Get all serverless handler as entry points for esbuild
-    const entryPoints = (await glob(`${appRoot}/src/handlers/**/*.ts`)).map((entry) => resolve(appRoot, entry));
+    const entryPoints = await glob(`${appRoot}/src/handlers/**/*.ts`);
+
+    // Copy all non typescript files from /src
+    for (const file of await glob(`${appRoot}/src/**/!(*.ts)`, { dot: true })) {
+        copyFile(file, file.replace(appRoot, outputRoot));
+    }
 
     const { dependencies, devDependencies } = await resolveDependencies(options, context);
 
