@@ -1,5 +1,7 @@
+import depcheck from '@cubesoft/depcheck';
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
-import depcheck from 'depcheck';
+// TODO: Use official depcheck again once fixed
+// import depcheck from 'depcheck';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
 import { existsSync } from 'fs';
@@ -70,18 +72,16 @@ async function resolveDependencies(
     dependencies: PackageJsonDependencies;
     devDependencies: PackageJsonDependencies;
 }> {
+    const appRoot = getAbsoluteAppRoot(context);
     const outputRoot = getAbsoluteOutputRoot(context);
     // Resolve all necessary npm packages and versions and write a new package.json file
     const packageJson = readJsonFile(resolve(context.root, 'package.json'));
-    const buildPackageJson = resolve(outputRoot, 'package.json');
     const outPackageJson = resolve(outputRoot, 'package.json');
-    writeJsonFile(buildPackageJson, {
-        name: packageJson.name,
-        version: packageJson.version,
-        dependencies: {},
-        devDependencies: {}
+    const result = await depcheck(appRoot, {
+        package: { dependencies: {}, devDependencies: {} },
+        ignoreBinPackage: true,
+        specials: []
     });
-    const result = await depcheck(outputRoot, {});
     const dependencies = [
         ...result.dependencies,
         ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.dependencies).includes(m))
@@ -95,7 +95,7 @@ async function resolveDependencies(
         return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
     }, {});
     writeJsonFile(outPackageJson, {
-        name: packageJson.name,
+        name: context.projectName,
         version: packageJson.version,
         dependencies,
         devDependencies

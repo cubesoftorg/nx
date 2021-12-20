@@ -1,4 +1,4 @@
-import { readJson, readProjectConfiguration, Tree } from '@nrwl/devkit';
+import { Tree, readJson, readProjectConfiguration } from '@nrwl/devkit';
 import { createTreeWithEmptyWorkspace } from '@nrwl/devkit/testing';
 
 import generator from './generator';
@@ -24,5 +24,11 @@ describe('nx-sls generator', () => {
         expect(devDependencies['serverless']).toBeDefined();
         expect(devDependencies['serverlessOffline']).toBeDefined();
         expect(devDependencies['@types/aws-lambda']).toBeDefined();
+    });
+
+    it('should add a linter file', async () => {
+        await generator(appTree, options);
+        const eslintrc = readJson(appTree, '.eslintrc.json');
+        expect(eslintrc.extends).toBeDefined();
     });
 });

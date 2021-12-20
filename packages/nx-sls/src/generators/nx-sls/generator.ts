@@ -67,7 +67,9 @@ function addDependencies(tree: Tree) {
     const dependencies: Record<string, string> = {};
     const devDependencies: Record<string, string> = {
         '@types/aws-lambda': awsLambdaTypesVersion,
-        depcheck: depcheckVersion,
+        '@cubesoft/depcheck': '0.0.1',
+        // TODO: Use official depcheck again once fixed
+        // depcheck: depcheckVersion,
         esbuild: esbuildVersion,
         'fast-glob': fastGlobVersion,
         serverless: serverlessVersion,
