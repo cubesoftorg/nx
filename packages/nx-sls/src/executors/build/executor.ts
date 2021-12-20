@@ -80,20 +80,25 @@ async function resolveDependencies(
     const result = await depcheck(appRoot, {
         package: { dependencies: {}, devDependencies: {} },
         ignoreBinPackage: true,
+        ignoreMatches: [...getTsConfigPaths(appRoot)],
         specials: []
     });
     const dependencies = [
         ...result.dependencies,
         ...Object.keys(result.missing).filter((m) => Object.keys(packageJson.dependencies).includes(m))
-    ].reduce((prev, curr) => {
-        return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
-    }, {});
+    ]
+        .sort()
+        .reduce((prev, curr) => {
+            return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
+        }, {});
     const devDependencies = [
         ...result.devDependencies,
         ...Object.keys(result.missing).filter((m) => !Object.keys(packageJson.dependencies).includes(m))
-    ].reduce((prev, curr) => {
-        return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
-    }, {});
+    ]
+        .sort()
+        .reduce((prev, curr) => {
+            return { ...prev, ...resolvePackageJsonEntry(context.root, curr) };
+        }, {});
     writeJsonFile(outPackageJson, {
         name: context.projectName,
         version: packageJson.version,
@@ -119,4 +124,17 @@ function resolvePackageJsonEntry(projectRoot: string, packageName: string): Pack
         };
     }
     return { [packageName]: '*' };
+}
+
+function getTsConfigPaths(appRoot: string): string[] {
+    const tsConfig = mergeTsConfig(appRoot, 'tsconfig.app.json');
+    return Object.keys(tsConfig?.compilerOptions?.paths || {});
+}
+
+function mergeTsConfig(appRoot: string, tsConfigPath: string): any {
+    let tsConfig = readJsonFile(resolve(appRoot, tsConfigPath));
+    if (tsConfig?.extends) {
+        tsConfig = { ...tsConfig, ...mergeTsConfig(appRoot, tsConfig?.extends) };
+    }
+    return tsConfig;
 }
