@@ -1,6 +1,7 @@
 import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
 import { resolve } from 'path';
 
+import { parseArgs } from '../../utils/parse-args';
 import { Serverless, ServerlessCommand } from '../../utils/serverless/serverless';
 import { BuildExecutorSchema } from '../build/schema';
 import { OfflineExecutorSchema } from './schema';
@@ -32,5 +33,5 @@ async function offline(options: OfflineExecutorSchema, context: ExecutorContext)
         workspaceRoot: context.root,
         cwd: resolve(context.root, options.outputPath)
     });
-    return serverless.run(ServerlessCommand.Offline);
+    return serverless.run(ServerlessCommand.Offline, parseArgs(options));
 }

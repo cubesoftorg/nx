@@ -1,7 +1,7 @@
+import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
 import { resolve } from 'path';
 
-import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
-
+import { parseArgs } from '../../utils/parse-args';
 import { Serverless, ServerlessCommand } from '../../utils/serverless/serverless';
 import { BuildExecutorSchema } from '../build/schema';
 import { DeployExecutorSchema } from './schema';
@@ -33,5 +33,5 @@ async function deploy(options: DeployExecutorSchema, context: ExecutorContext) {
         workspaceRoot: context.root,
         cwd: resolve(context.root, options.outputPath)
     });
-    return serverless.run(ServerlessCommand.Deploy);
+    return serverless.run(ServerlessCommand.Deploy, parseArgs(options));
 }
