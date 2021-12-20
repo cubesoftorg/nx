@@ -11,6 +11,11 @@
       "schema": "./src/executors/deploy/schema.json",
       "description": "deploy executor"
     },
+    "offline": {
+      "implementation": "./src/executors/offline/executor",
+      "schema": "./src/executors/offline/schema.json",
+      "description": "offline executor"
+    },
     "remove": {
       "implementation": "./src/executors/remove/executor",
       "schema": "./src/executors/remove/schema.json",

@@ -1,9 +1,9 @@
 import { ExecutorContext } from '@nrwl/devkit';
 
 import executor from './executor';
-import { DeployExecutorSchema } from './schema';
+import { OfflineExecutorSchema } from './schema';
 
-const options: DeployExecutorSchema = {
+const options: OfflineExecutorSchema = {
     outputPath: ''
 };
 

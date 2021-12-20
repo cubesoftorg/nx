@@ -112,6 +112,12 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
                     outputPath: `dist/${normalizedOptions.projectRoot}`
                 }
             },
+            offline: {
+                executor: '@cubesoft/nx-sls:offline',
+                options: {
+                    outputPath: `dist/${normalizedOptions.projectRoot}`
+                }
+            },
             remove: {
                 executor: '@cubesoft/nx-sls:remove',
                 options: {
