@@ -11,7 +11,8 @@ import { resolve } from 'path';
 import { copyFile } from '../../utils/file-utils';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
-import { esbuildReplaceFilePlugin } from './esbuild.replace';
+import { parseTsConfig } from '../../utils/tsconfig';
+import { replaceTranspileEsbuildPlugin } from './replace-transpile.esbuild';
 import { BuildExecutorSchema } from './schema';
 
 interface PackageJsonDependencies {
@@ -56,7 +57,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
         outdir: resolve(outputRoot, 'src/handlers/'),
         tsconfig: resolve(appRoot, options.tsConfig),
-        plugins: [esbuildReplaceFilePlugin(options, context)]
+        plugins: [replaceTranspileEsbuildPlugin(options, context)]
     });
 
     // Install packages to generate a package-lock.json file
@@ -86,7 +87,7 @@ async function resolveDependencies(
     const result = await depcheck(appRoot, {
         package: { dependencies: {}, devDependencies: {} },
         ignoreBinPackage: true,
-        ignoreMatches: [...getTsConfigPaths(appRoot)],
+        ignoreMatches: [...(await getTsConfigPaths(appRoot))],
         specials: []
     });
     const dependencies = [
@@ -132,15 +133,7 @@ function resolvePackageJsonEntry(projectRoot: string, packageName: string): Pack
     return { [packageName]: '*' };
 }
 
-function getTsConfigPaths(appRoot: string): string[] {
-    const tsConfig = mergeTsConfig(appRoot, 'tsconfig.app.json');
-    return Object.keys(tsConfig?.compilerOptions?.paths || {});
-}
-
-function mergeTsConfig(appRoot: string, tsConfigPath: string): any {
-    let tsConfig = readJsonFile(resolve(appRoot, tsConfigPath));
-    if (tsConfig?.extends) {
-        tsConfig = { ...tsConfig, ...mergeTsConfig(appRoot, tsConfig?.extends) };
-    }
-    return tsConfig;
+async function getTsConfigPaths(appRoot: string): Promise<string[]> {
+    const tsConfig = await parseTsConfig(resolve(appRoot, 'tsconfig.app.json'));
+    return Object.keys(tsConfig?.options?.paths || {});
 }

@@ -1,5 +1,16 @@
-import { constants, PathLike, promises as fs } from 'fs';
+import { PathLike, constants, promises as fs } from 'fs';
 import { dirname, join } from 'path';
+
+export async function readFile(path: PathLike) {
+    if (!(await exists(path))) {
+        throw new Error(`Failed to open ${path}`);
+    }
+    return fs.readFile(path);
+}
+
+export async function readJsonFile(path: PathLike) {
+    return JSON.parse((await readFile(path)).toString());
+}
 
 export async function copyFile(src: string, dest: string) {
     await createDirectory(dirname(dest));
