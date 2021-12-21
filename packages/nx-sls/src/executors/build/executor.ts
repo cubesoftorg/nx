@@ -5,6 +5,7 @@ import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
 import { existsSync } from 'fs';
+import { platform } from 'os';
 import { resolve } from 'path';
 
 import { copyFile } from '../../utils/file-utils';
@@ -59,7 +60,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     });
 
     // Install packages to generate a package-lock.json file
-    await runCommand('npm', ['install', '--production'], {
+    await runCommand(platform() === 'win32' ? 'npm.cmd' : 'npm', ['install', '--production'], {
         cwd: resolve(outputRoot)
     });
 
