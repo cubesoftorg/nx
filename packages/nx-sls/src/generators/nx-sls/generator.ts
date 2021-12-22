@@ -133,7 +133,12 @@ export default async function (tree: Tree, options: NxSlsGeneratorSchema) {
     tasks.push(addLinterPlugin(tree));
     tasks.push(addDependencies(tree));
     await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint });
-    await jestProjectGenerator(tree, { project: options.name, setupFile: 'none', skipSerializers: true });
+    await jestProjectGenerator(tree, {
+        project: options.name,
+        setupFile: 'none',
+        skipSerializers: true,
+        testEnvironment: 'node'
+    });
     await formatFiles(tree);
     return runTasksInSerial(...tasks);
 }
