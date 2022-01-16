@@ -1,10 +1,9 @@
-import { ExecutorContext } from '@nrwl/devkit';
-// TODO: Use official depcheck again once fixed
-// import depcheck from 'depcheck';
 import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
 import { platform } from 'os';
 import { resolve } from 'path';
+
+import { ExecutorContext } from '@nrwl/devkit';
 
 import { resolveDependencies } from '../../utils/dependencies';
 import { copyFile } from '../../utils/file-utils';

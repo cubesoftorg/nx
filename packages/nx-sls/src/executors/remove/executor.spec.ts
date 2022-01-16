@@ -1,13 +1,10 @@
 import { ExecutorContext } from '@nrwl/devkit';
 
 import executor from './executor';
-import { BuildExecutorSchema } from './schema';
+import { RemoveExecutorSchema } from './schema';
 
-const options: BuildExecutorSchema = {
-    outputPath: '',
-    platform: 'node',
-    target: 'node14',
-    tsConfig: ''
+const options: RemoveExecutorSchema = {
+    outputPath: ''
 };
 
 const context: ExecutorContext = {

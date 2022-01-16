@@ -1,3 +1,5 @@
+// TODO: Use official depcheck again once fixed
+// import depcheck from 'depcheck';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 

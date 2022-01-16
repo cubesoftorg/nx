@@ -1,5 +1,6 @@
-import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
 import { resolve } from 'path';
+
+import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
 
 import { parseArgs } from '../../utils/parse-args';
 import { Serverless, ServerlessCommand } from '../../utils/serverless/serverless';

@@ -1,5 +1,6 @@
-import { ExecutorContext } from '@nrwl/devkit';
 import { resolve } from 'path';
+
+import { ExecutorContext } from '@nrwl/devkit';
 
 export function getAppRoot(context: ExecutorContext) {
     return context.workspace.projects[context.projectName].root;

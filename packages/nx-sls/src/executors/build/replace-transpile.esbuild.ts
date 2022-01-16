@@ -1,7 +1,8 @@
-import { ExecutorContext } from '@nrwl/devkit';
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
 import { transpileModule } from 'typescript';
+
+import { ExecutorContext } from '@nrwl/devkit';
 
 import { getAbsoluteAppRoot } from '../../utils/nx/utils';
 import { parseTsConfig } from '../../utils/tsconfig';
