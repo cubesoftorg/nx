@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import {
     GeneratorCallback,
     Tree,
@@ -12,11 +14,9 @@ import {
 import { jestProjectGenerator } from '@nrwl/jest';
 import { Linter, lintProjectGenerator } from '@nrwl/linter';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
-import { join } from 'path';
 
 import {
     awsLambdaTypesVersion,
-    depcheckVersion,
     esbuildVersion,
     fastGlobVersion,
     serverlessOfflineVersion,
