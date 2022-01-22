@@ -11,7 +11,10 @@ export default async function offlineExecutor(options: OfflineExecutorSchema, co
     try {
         for await (const event of await runExecutor(
             { project: context.projectName, target: 'build' },
-            readTargetOptions<BuildExecutorSchema>({ project: context.projectName, target: 'build' }, context),
+            {
+                ...readTargetOptions<BuildExecutorSchema>({ project: context.projectName, target: 'build' }, context),
+                watch: true
+            } as BuildExecutorSchema,
             context
         )) {
             if (!event.success) {

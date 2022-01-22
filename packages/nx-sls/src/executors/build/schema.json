@@ -20,6 +20,10 @@
     "target": {
       "type": "string",
       "description": "The node version for esbuild."
+    },
+    "watch": {
+      "type": "boolean",
+      "description": "Run esbuild in watch mode for continuous builds."
     }
   },
   "required": []

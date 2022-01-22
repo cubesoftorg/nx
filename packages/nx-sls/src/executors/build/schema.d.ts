@@ -5,4 +5,5 @@ export interface BuildExecutorSchema {
     tsConfig: string;
     platform: Platform;
     target: string;
+    watch?: boolean;
 }

@@ -1,4 +1,3 @@
-import { build as esbuild } from 'esbuild';
 import glob from 'fast-glob';
 import { platform } from 'os';
 import { resolve } from 'path';
@@ -6,10 +5,10 @@ import { resolve } from 'path';
 import { ExecutorContext } from '@nrwl/devkit';
 
 import { resolveDependencies } from '../../utils/dependencies';
+import { esbuild } from '../../utils/esbuild';
 import { copyFile } from '../../utils/file-utils';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
-import { replaceTranspileEsbuildPlugin } from './replace-transpile.esbuild';
 import { BuildExecutorSchema } from './schema';
 
 export default async function buildExecuter(options: BuildExecutorSchema, context: ExecutorContext) {
@@ -39,19 +38,22 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     const { dependencies, devDependencies } = await resolveDependencies(options, context);
 
     // Build all serverless handler files via esbuild
-    await esbuild({
-        entryPoints,
-        bundle: true,
-        format: 'cjs',
-        legalComments: 'none',
-        minify: true,
-        platform: options.platform,
-        target: options.target,
-        external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
-        outdir: resolve(outputRoot, 'src/handlers/'),
-        tsconfig: resolve(appRoot, options.tsConfig),
-        plugins: [replaceTranspileEsbuildPlugin(options, context)]
-    });
+    await esbuild(
+        {
+            entryPoints,
+            bundle: true,
+            format: 'cjs',
+            legalComments: 'none',
+            minify: true,
+            platform: options.platform,
+            target: options.target,
+            external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
+            outdir: resolve(outputRoot, 'src/handlers/'),
+            tsconfig: resolve(appRoot, options.tsConfig),
+            watch: options.watch ?? false
+        },
+        context
+    );
 
     // Install packages to generate a package-lock.json file
     await runCommand(platform() === 'win32' ? 'npm.cmd' : 'npm', ['install', '--production'], {
@@ -59,8 +61,4 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     });
 
     await copyFile(resolve(appRoot, 'serverless.yml'), resolve(outputRoot, 'serverless.yml'));
-
-    return {
-        success: true
-    };
 }

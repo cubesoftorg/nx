@@ -4,16 +4,15 @@ import { transpileModule } from 'typescript';
 
 import { ExecutorContext } from '@nrwl/devkit';
 
-import { getAbsoluteAppRoot } from '../../utils/nx/utils';
-import { parseTsConfig } from '../../utils/tsconfig';
-import { BuildExecutorSchema } from './schema';
+import { getAbsoluteAppRoot } from './nx/utils';
+import { parseTsConfig } from './tsconfig';
 
 interface FileReplacement {
     replace: string;
     with: string;
 }
 
-export function replaceTranspileEsbuildPlugin(options: BuildExecutorSchema, context: ExecutorContext) {
+export function replaceTranspileEsbuildPlugin(context: ExecutorContext) {
     return {
         name: 'replace-transpile-files',
         setup: (build) => {
