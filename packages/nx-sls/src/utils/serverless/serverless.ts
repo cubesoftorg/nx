@@ -5,7 +5,9 @@ import { runCommand } from '../run-command';
 export enum ServerlessCommand {
     Deploy = 'deploy',
     Offline = 'offline',
-    Remove = 'remove'
+    Remove = 'remove',
+    Invoke = 'invoke',
+    InvokeLocal = 'invoke local'
 }
 
 export interface ServerlessConfig {
@@ -21,9 +23,13 @@ export class Serverless {
     }
 
     async run(command: ServerlessCommand, args: string[] = []) {
-        return runCommand(resolve(this.config.workspaceRoot, 'node_modules', '.bin', 'sls'), [command, ...args], {
-            cwd: this.config.cwd,
-            stdio: 'inherit'
-        });
+        return runCommand(
+            resolve(this.config.workspaceRoot, 'node_modules', '.bin', 'sls'),
+            [...command.split(' '), ...args],
+            {
+                cwd: this.config.cwd,
+                stdio: 'inherit'
+            }
+        );
     }
 }

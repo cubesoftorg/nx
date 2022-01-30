@@ -11,6 +11,16 @@
       "schema": "./src/executors/deploy/schema.json",
       "description": "deploy executor"
     },
+    "invoke": {
+      "implementation": "./src/executors/invoke/executor",
+      "schema": "./src/executors/invoke/schema.json",
+      "description": "invoke executor"
+    },
+    "invoke-local": {
+      "implementation": "./src/executors/invoke-local/executor",
+      "schema": "./src/executors/invoke-local/schema.json",
+      "description": "invoke-local executor"
+    },
     "offline": {
       "implementation": "./src/executors/offline/executor",
       "schema": "./src/executors/offline/schema.json",
