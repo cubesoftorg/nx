@@ -1,9 +1,7 @@
-// TODO: Use official depcheck again once fixed
-// import depcheck from 'depcheck';
+import depcheck from 'depcheck';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import depcheck from '@cubesoft/depcheck';
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 
 import { BuildExecutorSchema } from '../executors/build/schema';
@@ -26,10 +24,12 @@ export async function resolveDependencies(
     // Resolve all necessary npm packages and versions and write a new package.json file
     const packageJson = readJsonFile(resolve(context.root, 'package.json'));
     const outPackageJson = resolve(outputRoot, 'package.json');
+    // Resolve tsconfig paths and dropping "/*" endings to enable proper matching in depcheck
+    const tsConfigPaths = [...(await getTsConfigPaths(appRoot)).map((path) => path.replace('/*', ''))];
     const result = await depcheck(appRoot, {
         package: { dependencies: {}, devDependencies: {} },
         ignoreBinPackage: true,
-        ignoreMatches: [...(await getTsConfigPaths(appRoot))],
+        ignoreMatches: tsConfigPaths,
         specials: []
     });
     const dependencies = [

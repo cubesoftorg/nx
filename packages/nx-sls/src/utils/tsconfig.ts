@@ -5,13 +5,7 @@ import { exists, readFile } from './file-utils';
 
 export async function getTsConfigPaths(appRoot: string): Promise<string[]> {
     const tsConfig = await parseTsConfig(resolve(appRoot, 'tsconfig.app.json'));
-    return Object.keys(tsConfig?.options?.paths || {}).map(val => {
-        //For e.g. shared libraries /* is required in tsconfig file, but the module itself ends without /
-        if (val.endsWith('/*')) {
-            return val.replace('/*', '**');
-        }
-        return val;
-    });
+    return Object.keys(tsConfig?.options?.paths || {});
 }
 
 export async function parseTsConfig(tsConfigPath: string): Promise<ParsedCommandLine> {

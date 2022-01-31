@@ -17,6 +17,7 @@ import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-ser
 
 import {
     awsLambdaTypesVersion,
+    depcheckVersion,
     esbuildVersion,
     fastGlobVersion,
     serverlessOfflineVersion,
@@ -67,9 +68,7 @@ function addDependencies(tree: Tree) {
     const dependencies: Record<string, string> = {};
     const devDependencies: Record<string, string> = {
         '@types/aws-lambda': awsLambdaTypesVersion,
-        '@cubesoft/depcheck': '0.0.1',
-        // TODO: Use official depcheck again once fixed
-        // depcheck: depcheckVersion,
+        depcheck: depcheckVersion,
         esbuild: esbuildVersion,
         'fast-glob': fastGlobVersion,
         serverless: serverlessVersion,
