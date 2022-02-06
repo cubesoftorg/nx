@@ -70,7 +70,7 @@ export async function copyDirectory(src: PathLike, dest: PathLike) {
 
 export async function deleteDirectory(path: PathLike) {
     if (await exists(path)) {
-        return fs.rmdir(path, { recursive: true });
+        return fs.rm(path, { recursive: true });
     }
     return;
 }

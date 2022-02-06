@@ -6,7 +6,7 @@ import { ExecutorContext } from '@nrwl/devkit';
 
 import { resolveDependencies } from '../../utils/dependencies';
 import { esbuild } from '../../utils/esbuild';
-import { copyFile } from '../../utils/file-utils';
+import { copyFile, deleteDirectory } from '../../utils/file-utils';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
 import { runCommand } from '../../utils/run-command';
 import { BuildExecutorSchema } from './schema';
@@ -26,6 +26,8 @@ export default async function buildExecuter(options: BuildExecutorSchema, contex
 async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     const appRoot = getAbsoluteAppRoot(context);
     const outputRoot = getAbsoluteOutputRoot(context);
+
+    await deleteDirectory(outputRoot);
 
     // Get all serverless handler as entry points for esbuild
     const entryPoints = await glob(`${appRoot}/src/handlers/**/*.ts`);
