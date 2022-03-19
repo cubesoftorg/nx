@@ -2,9 +2,9 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 import { transpileModule } from 'typescript';
 
+import { getAbsoluteAppRoot } from '@cubesoft/utils/nx/utils';
 import { ExecutorContext } from '@nrwl/devkit';
 
-import { getAbsoluteAppRoot } from './nx/utils';
 import { parseTsConfig } from './tsconfig';
 
 interface FileReplacement {

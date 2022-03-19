@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@cubesoft/utils/*": ["packages/utils/src/lib/*"],
       "cubesoft/nx-sls": ["packages/nx-sls/src/index.ts"]
     }
   },

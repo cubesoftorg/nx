@@ -1,7 +1,7 @@
 import { basename, resolve } from 'path';
 import { ParsedCommandLine, parseConfigFileTextToJson, parseJsonConfigFileContent, sys } from 'typescript';
 
-import { exists, readFile } from './file-utils';
+import { exists, readFile } from '@cubesoft/utils/common/file-utils';
 
 export async function getTsConfigPaths(appRoot: string): Promise<string[]> {
     const tsConfig = await parseTsConfig(resolve(appRoot, 'tsconfig.app.json'));
