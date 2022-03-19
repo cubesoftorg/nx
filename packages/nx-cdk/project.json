@@ -1,0 +1,54 @@
+{
+  "root": "packages/nx-cdk",
+  "sourceRoot": "packages/nx-cdk/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/nx-cdk",
+        "main": "packages/nx-cdk/src/index.ts",
+        "tsConfig": "packages/nx-cdk/tsconfig.lib.json",
+        "assets": [
+          "packages/nx-cdk/*.md",
+          {
+            "input": "./packages/nx-cdk/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-cdk/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/nx-cdk",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/nx-cdk",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/nx-cdk/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/nx-cdk"],
+      "options": {
+        "jestConfig": "packages/nx-cdk/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
