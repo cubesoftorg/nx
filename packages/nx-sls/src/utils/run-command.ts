@@ -14,7 +14,7 @@ export async function runCommand(command: string, args: readonly string[] = [], 
             ...options
         });
         process.on('exit', (code) => {
-            code > 0 ? rejectPromise(code) : resolvePromise();
+            (code || 0) > 0 ? rejectPromise(code) : resolvePromise();
         });
         process.on('error', rejectPromise);
     });

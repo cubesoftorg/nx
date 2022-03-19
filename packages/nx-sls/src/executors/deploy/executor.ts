@@ -1,8 +1,8 @@
 import { resolve } from 'path';
 
-import { parseArgs } from '@cubesoft/utils/common/parse-args';
 import { ExecutorContext, logger, readTargetOptions, runExecutor } from '@nrwl/devkit';
 
+import { parseArgs } from '../../utils/parse-args';
 import { Serverless, ServerlessCommand } from '../../utils/serverless/serverless';
 import { BuildExecutorSchema } from '../build/schema';
 import { DeployExecutorSchema } from './schema';

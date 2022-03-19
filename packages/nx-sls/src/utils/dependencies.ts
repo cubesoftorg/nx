@@ -2,10 +2,10 @@ import depcheck from 'depcheck';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/utils/nx/utils';
 import { ExecutorContext, readJsonFile, writeJsonFile } from '@nrwl/devkit';
 
 import { BuildExecutorSchema } from '../executors/build/schema';
+import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from './nx/utils';
 import { getTsConfigPaths } from './tsconfig';
 
 interface PackageJsonDependencies {

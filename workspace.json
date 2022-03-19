@@ -2,7 +2,6 @@
   "version": 2,
   "projects": {
     "nx-sls": "packages/nx-sls",
-    "nx-sls-e2e": "e2e/nx-sls-e2e",
-    "utils": "packages/utils"
+    "nx-sls-e2e": "e2e/nx-sls-e2e"
   }
 }

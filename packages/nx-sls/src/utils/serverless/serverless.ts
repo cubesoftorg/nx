@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-import { runCommand } from '@cubesoft/utils/common/run-command';
+import { runCommand } from '../run-command';
 
 export enum ServerlessCommand {
     Deploy = 'deploy',

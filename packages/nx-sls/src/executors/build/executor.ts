@@ -2,13 +2,13 @@ import glob from 'fast-glob';
 import { platform } from 'os';
 import { resolve } from 'path';
 
-import { copyFile, deleteDirectory } from '@cubesoft/utils/common/file-utils';
-import { runCommand } from '@cubesoft/utils/common/run-command';
-import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/utils/nx/utils';
 import { ExecutorContext } from '@nrwl/devkit';
 
 import { resolveDependencies } from '../../utils/dependencies';
 import { esbuild } from '../../utils/esbuild';
+import { copyFile, deleteDirectory } from '../../utils/file-utils';
+import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
+import { runCommand } from '../../utils/run-command';
 import { BuildExecutorSchema } from './schema';
 
 export default async function buildExecuter(options: BuildExecutorSchema, context: ExecutorContext) {
