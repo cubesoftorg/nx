@@ -2,7 +2,7 @@
 
 set -e
 
-BASEDIR=$(dirname "$0")
+BASEDIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 PWDDIR="$(pwd)"
 
 if [ -z "$1" ]
@@ -17,7 +17,7 @@ cd $BASEDIR/../packages/$PACKAGE
 npm version minor --force
 
 cd $BASEDIR/../
-nx build $PACKAGE
+npx nx build $PACKAGE
 
 cd $BASEDIR/../dist/packages/$PACKAGE
 npm publish --access=public
