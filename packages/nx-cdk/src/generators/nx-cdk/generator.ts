@@ -71,6 +71,12 @@ export default async function (tree: Tree, options: NxCdkGeneratorSchema) {
         targets: {
             bootstrap: {
                 executor: '@cubesoft/nx-cdk:bootstrap'
+            },
+            deploy: {
+                executor: '@cubesoft/nx-cdk:deploy'
+            },
+            destroy: {
+                executor: '@cubesoft/nx-cdk:destroy'
             }
         },
         tags: normalizedOptions.parsedTags

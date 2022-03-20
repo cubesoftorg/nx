@@ -3,7 +3,9 @@ import { resolve } from 'path';
 import { runCommand } from './run-command';
 
 export enum CdkCommand {
-    Bootstrap = 'bootstrap'
+    Bootstrap = 'bootstrap',
+    Deploy = 'deploy',
+    Destroy = 'destroy'
 }
 
 export interface CdkConfig {
