@@ -1,4 +1,6 @@
+import { readFileSync } from 'fs';
 import * as path from 'path';
+import { resolve } from 'path';
 
 import {
     GeneratorCallback,
@@ -84,6 +86,7 @@ export default async function (tree: Tree, options: NxCdkGeneratorSchema) {
         skipSerializers: true,
         testEnvironment: 'node'
     });
+    await ignoreCdkOut(tree);
     await formatFiles(tree);
     return runTasksInSerial(...tasks);
 }
@@ -98,4 +101,12 @@ function addDependencies(tree: Tree) {
         'ts-jest': tsJestVersion
     };
     return addDependenciesToPackageJson(tree, dependencies, devDependencies);
+}
+
+async function ignoreCdkOut(tree: Tree) {
+    const ignores = readFileSync(resolve(tree.root, '.gitignore'), { encoding: 'utf8' }).split('\n');
+    if (!ignores.includes('cdk.out')) {
+        ignores.push('# AWS CDK', 'cdk.out', '');
+    }
+    tree.write('./.gitignore', ignores.join('\n'));
 }
