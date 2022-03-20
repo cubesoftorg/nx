@@ -77,6 +77,15 @@ export default async function (tree: Tree, options: NxCdkGeneratorSchema) {
             },
             destroy: {
                 executor: '@cubesoft/nx-cdk:destroy'
+            },
+            diff: {
+                executor: '@cubesoft/nx-cdk:diff'
+            },
+            ls: {
+                executor: '@cubesoft/nx-cdk:ls'
+            },
+            synth: {
+                executor: '@cubesoft/nx-cdk:synth'
             }
         },
         tags: normalizedOptions.parsedTags

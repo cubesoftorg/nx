@@ -5,7 +5,10 @@ import { runCommand } from './run-command';
 export enum CdkCommand {
     Bootstrap = 'bootstrap',
     Deploy = 'deploy',
-    Destroy = 'destroy'
+    Destroy = 'destroy',
+    Diff = 'diff',
+    Ls = 'ls',
+    Synth = 'synth'
 }
 
 export interface CdkConfig {

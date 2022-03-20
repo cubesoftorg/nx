@@ -15,6 +15,21 @@
       "implementation": "./src/executors/destroy/executor",
       "schema": "./src/executors/destroy/schema.json",
       "description": "destroy executor"
+    },
+    "synth": {
+      "implementation": "./src/executors/synth/executor",
+      "schema": "./src/executors/synth/schema.json",
+      "description": "synth executor"
+    },
+    "diff": {
+      "implementation": "./src/executors/diff/executor",
+      "schema": "./src/executors/diff/schema.json",
+      "description": "diff executor"
+    },
+    "ls": {
+      "implementation": "./src/executors/ls/executor",
+      "schema": "./src/executors/ls/schema.json",
+      "description": "ls executor"
     }
   }
 }

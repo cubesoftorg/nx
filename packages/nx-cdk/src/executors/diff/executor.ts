@@ -3,20 +3,20 @@ import { ExecutorContext } from '@nrwl/devkit';
 import { Cdk, CdkCommand } from '../../utils/cdk';
 import { getAbsoluteAppRoot } from '../../utils/nx/utils';
 import { parseArgs } from '../../utils/parse-args';
-import { DestroyExecutorSchema } from './schema';
+import { DiffExecutorSchema } from './schema';
 
-export default async function runExecutor(options: DestroyExecutorSchema, context: ExecutorContext) {
-    await destroy(options, context);
+export default async function runExecutor(options: DiffExecutorSchema, context: ExecutorContext) {
+    await diff(options, context);
 
     return {
         success: true
     };
 }
 
-async function destroy(options: DestroyExecutorSchema, context: ExecutorContext) {
+async function diff(options: DiffExecutorSchema, context: ExecutorContext) {
     const serverless = new Cdk({
         workspaceRoot: context.root,
         cwd: getAbsoluteAppRoot(context)
     });
-    return serverless.run(CdkCommand.Destroy, parseArgs(options));
+    return serverless.run(CdkCommand.Diff, parseArgs(options));
 }
