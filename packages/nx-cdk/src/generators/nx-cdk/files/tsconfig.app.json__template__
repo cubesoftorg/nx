@@ -1,0 +1,36 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../../dist/out-tsc",
+        "target": "ES2018",
+        "module": "commonjs",
+        "lib": [
+            "es2018"
+        ],
+        "declaration": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": false,
+        "experimentalDecorators": true,
+        "strictPropertyInitialization": false,
+        "types": [
+            "node"
+        ],
+        "typeRoots": [
+            "node_modules/@types"
+        ]
+    },
+    "exclude": [
+        "**/*.spec.ts",
+        "cdk.out"
+    ],
+    "include": [
+        "**/*.ts"
+    ]
+}

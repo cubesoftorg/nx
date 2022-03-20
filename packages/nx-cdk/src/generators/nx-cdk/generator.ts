@@ -1,7 +1,9 @@
 import * as path from 'path';
 
 import {
+    GeneratorCallback,
     Tree,
+    addDependenciesToPackageJson,
     addProjectConfiguration,
     formatFiles,
     generateFiles,
@@ -9,7 +11,19 @@ import {
     names,
     offsetFromRoot
 } from '@nrwl/devkit';
+import { jestProjectGenerator } from '@nrwl/jest';
+import { Linter, lintProjectGenerator } from '@nrwl/linter';
+import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 
+import {
+    awsCdkLibVersion,
+    awsCdkVersion,
+    constructsVersion,
+    sourceMapSupportVersion,
+    tsJestVersion
+} from '../../utils/versions';
+import { addJestPlugin } from './lib/add-jest-plugin';
+import { addLinterPlugin } from './lib/add-linter-plugin';
 import { NxCdkGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends NxCdkGeneratorSchema {
@@ -23,7 +37,7 @@ function normalizeOptions(tree: Tree, options: NxCdkGeneratorSchema): Normalized
     const name = names(options.name).fileName;
     const projectDirectory = options.directory ? `${names(options.directory).fileName}/${name}` : name;
     const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-');
-    const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${projectDirectory}`;
+    const projectRoot = `${getWorkspaceLayout(tree).appsDir}/${projectDirectory}`;
     const parsedTags = options.tags ? options.tags.split(',').map((s) => s.trim()) : [];
 
     return {
@@ -46,18 +60,42 @@ function addFiles(tree: Tree, options: NormalizedSchema) {
 }
 
 export default async function (tree: Tree, options: NxCdkGeneratorSchema) {
+    const tasks: GeneratorCallback[] = [];
     const normalizedOptions = normalizeOptions(tree, options);
     addProjectConfiguration(tree, normalizedOptions.projectName, {
         root: normalizedOptions.projectRoot,
-        projectType: 'library',
+        projectType: 'application',
         sourceRoot: `${normalizedOptions.projectRoot}/src`,
         targets: {
-            build: {
-                executor: '@cubesoft/nx-cdk:build'
+            bootstrap: {
+                executor: '@cubesoft/nx-cdk:bootstrap'
             }
         },
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
+    tasks.push(addJestPlugin(tree));
+    tasks.push(addLinterPlugin(tree));
+    tasks.push(addDependencies(tree));
+    await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint });
+    await jestProjectGenerator(tree, {
+        project: options.name,
+        setupFile: 'none',
+        skipSerializers: true,
+        testEnvironment: 'node'
+    });
     await formatFiles(tree);
+    return runTasksInSerial(...tasks);
+}
+
+function addDependencies(tree: Tree) {
+    const dependencies: Record<string, string> = {};
+    const devDependencies: Record<string, string> = {
+        'aws-cdk': awsCdkVersion,
+        'aws-cdk-lib': awsCdkLibVersion,
+        constructs: constructsVersion,
+        'source-map-support': sourceMapSupportVersion,
+        'ts-jest': tsJestVersion
+    };
+    return addDependenciesToPackageJson(tree, dependencies, devDependencies);
 }
