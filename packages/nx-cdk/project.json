@@ -1,5 +1,5 @@
 {
-  "root": "packages/nx-cdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-cdk/src",
   "targets": {
     "build": {
@@ -45,7 +45,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/nx-cdk"],
       "options": {
-        "jestConfig": "packages/nx-cdk/jest.config.js",
+        "jestConfig": "packages/nx-cdk/jest.config.ts",
         "passWithNoTests": true
       }
     }
