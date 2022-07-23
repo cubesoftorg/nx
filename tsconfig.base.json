@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@cubesoft/nx-cdk": ["packages/nx-cdk/src/index.ts"],
+      "@cubesoft/nx-lambda-build": ["packages/nx-lambda-build/src/index.ts"],
       "cubesoft/nx-sls": ["packages/nx-sls/src/index.ts"]
     }
   },
