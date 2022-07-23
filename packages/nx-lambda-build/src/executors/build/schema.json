@@ -4,6 +4,11 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "target": {
+      "type": "string",
+      "description": "The node version for esbuild."
+    }
+  },
   "required": []
 }

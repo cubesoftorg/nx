@@ -1,11 +1,39 @@
 # nx-lambda-build
 
-This library was generated with [Nx](https://nx.dev).
+## Getting started
 
-## Building
+### Prerequisite
 
-Run `nx build nx-lambda-build` to build the library.
+This module is based on Nx, you will need to set up an Nx workspace before you can use nx-cdk.
 
-## Running unit tests
+```shell
+npx create-nx-workspace
+```
 
-Run `nx test nx-lambda-build` to execute the unit tests via [Jest](https://jestjs.io).
+### Installation
+
+```shell
+npm i -D @cubesoft/nx-lambda-build
+```
+
+### Creating a nx-cdk project
+
+```shell
+nx g @cubesoft/nx-lambda-build:nx-lambda-build <name> [--dry-run]
+```
+
+### Build a lambda handler
+
+Run the command below to build your lambda handler and generate a `package.json` file with all used packages.
+
+```shell
+nx deploy <project> [--profile <profilename>] # optionally provide an AWS profile name
+```
+
+### Add a new lambda handler
+
+Run the command below to add a new lambda handler. This will automatically add the required entrypoint in the `handlers.json` file for you.
+
+```shell
+nx g @cubesoft/nx-lambda-build:handler <path> [--dry-run]
+```
