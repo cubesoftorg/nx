@@ -13,7 +13,8 @@ export default async function offlineExecutor(options: OfflineExecutorSchema, co
             { project: context.projectName, target: 'build' },
             {
                 ...readTargetOptions<BuildExecutorSchema>({ project: context.projectName, target: 'build' }, context),
-                watch: true
+                watch: true,
+                installPackages: false
             } as BuildExecutorSchema,
             context
         )) {

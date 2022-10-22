@@ -24,6 +24,10 @@
     "watch": {
       "type": "boolean",
       "description": "Run esbuild in watch mode for continuous builds."
+    },
+    "installPackages": {
+      "type": "boolean",
+      "description": "Indicates whether npm packages need to be installed."
     }
   },
   "required": []

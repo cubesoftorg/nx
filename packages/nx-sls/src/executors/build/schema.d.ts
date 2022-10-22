@@ -6,4 +6,5 @@ export interface BuildExecutorSchema {
     platform: Platform;
     target: string;
     watch?: boolean;
+    installPackages?: boolean;
 }

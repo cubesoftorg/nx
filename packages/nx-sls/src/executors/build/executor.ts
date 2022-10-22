@@ -58,9 +58,11 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     );
 
     // Install packages to generate a package-lock.json file
-    await runCommand(platform() === 'win32' ? 'npm.cmd' : 'npm', ['install', '--production'], {
-        cwd: resolve(outputRoot)
-    });
+    if (options.installPackages !== false) {
+        await runCommand(platform() === 'win32' ? 'npm.cmd' : 'npm', ['install', '--production'], {
+            cwd: resolve(outputRoot)
+        });
+    }
 
     await copyFile(resolve(appRoot, 'serverless.yml'), resolve(outputRoot, 'serverless.yml'));
 }

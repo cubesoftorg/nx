@@ -1,6 +1,6 @@
 {
   "name": "@cubesoft/nx-sls",
-  "version": "1.43.0",
+  "version": "1.44.0",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json",
