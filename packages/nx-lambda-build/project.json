@@ -49,7 +49,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/nx-lambda-build"],
+      "outputs": ["{workspaceRoot}/coverage/packages/nx-lambda-build"],
       "options": {
         "jestConfig": "packages/nx-lambda-build/jest.config.ts",
         "passWithNoTests": true

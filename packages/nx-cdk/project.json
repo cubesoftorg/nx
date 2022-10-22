@@ -43,7 +43,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/nx-cdk"],
+      "outputs": ["{workspaceRoot}/coverage/packages/nx-cdk"],
       "options": {
         "jestConfig": "packages/nx-cdk/jest.config.ts",
         "passWithNoTests": true

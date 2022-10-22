@@ -12,7 +12,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/nx-sls"],
+      "outputs": ["{workspaceRoot}/coverage/packages/nx-sls"],
       "options": {
         "jestConfig": "packages/nx-sls/jest.config.ts",
         "passWithNoTests": true
