@@ -27,7 +27,7 @@ nx g @cubesoft/nx-lambda-build:nx-lambda-build <name> [--dry-run]
 Run the command below to build your lambda handler and generate a `package.json` file with all used packages.
 
 ```shell
-nx deploy <project> [--profile <profilename>] # optionally provide an AWS profile name
+nx build <project> [--configuration <configuration name>] # Provide a specific build configuration
 ```
 
 ### Add a new lambda handler
