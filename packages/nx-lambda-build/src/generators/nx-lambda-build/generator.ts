@@ -15,7 +15,7 @@ import { jestProjectGenerator } from '@nrwl/jest';
 import { Linter, lintProjectGenerator } from '@nrwl/linter';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 
-import { typesAwsLambda } from '../../utils/versions';
+import { depcheckVersion, esbuildNodeExternalsVersion, typesAwsLambdaVersion } from '../../utils/versions';
 import { addJestPlugin } from './lib/add-jest-plugin';
 import { addLinterPlugin } from './lib/add-linter-plugin';
 import { NxLambdaBuildGeneratorSchema } from './schema';
@@ -100,7 +100,9 @@ export default async function (tree: Tree, options: NxLambdaBuildGeneratorSchema
 function addDependencies(tree: Tree) {
     const dependencies: Record<string, string> = {};
     const devDependencies: Record<string, string> = {
-        '@types/aws-lambda': typesAwsLambda
+        '@types/aws-lambda': typesAwsLambdaVersion,
+        depcheck: depcheckVersion,
+        'esbuild-node-externals': esbuildNodeExternalsVersion
     };
     return addDependenciesToPackageJson(tree, dependencies, devDependencies);
 }
