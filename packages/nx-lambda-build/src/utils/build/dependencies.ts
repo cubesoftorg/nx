@@ -28,12 +28,12 @@ export async function resolveDependencies(
         ignoreMatches: tsConfigPaths,
         specials: []
     });
-    const dependencies: PackageJsonDependencies = Object.keys(result.missing)
+    const dependencies: PackageJsonDependencies = Object.keys(result.using)
         .filter((m) => Object.keys(packageJson.dependencies).includes(m))
         .sort()
         .map((d) => ({ [d]: packageJson.dependencies[d] }))
         .reduce((prev, curr) => ({ ...prev, ...curr }), {});
-    const devDependencies: PackageJsonDependencies = Object.keys(result.missing)
+    const devDependencies: PackageJsonDependencies = Object.keys(result.using)
         .filter((m) => !Object.keys(packageJson.dependencies).includes(m))
         .sort()
         .map((d) => ({ [d]: packageJson.dependencies[d] }))
