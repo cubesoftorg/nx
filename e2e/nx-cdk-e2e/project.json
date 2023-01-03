@@ -12,5 +12,6 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["nx-cdk"]
+  "implicitDependencies": ["nx-cdk"],
+  "name": "nx-cdk-e2e"
 }

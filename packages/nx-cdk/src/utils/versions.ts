@@ -1,5 +1,5 @@
-export const awsCdkVersion = '^2.17.0';
-export const awsCdkLibVersion = '^2.17.0';
-export const constructsVersion = '^10.0.0';
-export const sourceMapSupportVersion = '^0.5.16';
-export const tsJestVersion = '^26.2.0';
+export const awsCdkVersion = '^2.58.01';
+export const awsCdkLibVersion = '^2.58.1';
+export const constructsVersion = '^10.1.208';
+export const sourceMapSupportVersion = '^0.5.21';
+export const tsJestVersion = '^28.0.8';

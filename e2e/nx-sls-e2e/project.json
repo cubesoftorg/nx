@@ -12,5 +12,6 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["nx-sls"]
+  "implicitDependencies": ["nx-sls"],
+  "name": "nx-sls-e2e"
 }

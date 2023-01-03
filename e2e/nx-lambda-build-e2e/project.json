@@ -12,5 +12,6 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["nx-lambda-build"]
+  "implicitDependencies": ["nx-lambda-build"],
+  "name": "nx-lambda-build-e2e"
 }
