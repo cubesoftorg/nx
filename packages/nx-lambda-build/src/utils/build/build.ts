@@ -10,7 +10,8 @@ export async function build(
     entryPoints: string[],
     outdir: string,
     tsconfig: string,
-    options?: BuildOptions
+    options?: BuildOptions,
+    bundleNodeModules = false
 ) {
     return esbuild({
         ...{
@@ -26,6 +27,12 @@ export async function build(
             watch: options?.watch ?? false
         },
         ...options,
-        plugins: [...(options?.plugins ?? []), replaceTranspileEsbuildPlugin(context), nodeExternalsPlugin()]
+        plugins: [
+            ...(options?.plugins ?? []),
+            replaceTranspileEsbuildPlugin(context),
+            // This option is added for bundling all node_modules to minimize size
+            // of the resulting lambda output e.g. for use with Lambda@Edge
+            ...(bundleNodeModules ? [] : [nodeExternalsPlugin()])
+        ]
     });
 }
