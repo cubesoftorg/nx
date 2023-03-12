@@ -88,7 +88,7 @@ export default class App {
         if (!App.application.isPackaged) {
             App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
         } else {
-            const url = new URL('file://' + join(__dirname, '..', rendererAppName, 'index.html'));
+            const url = new URL('file://' + join(__dirname, rendererAppName, 'index.html'));
             App.mainWindow.loadURL(url.toString());
         }
     }

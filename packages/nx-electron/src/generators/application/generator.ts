@@ -75,6 +75,10 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
                     }
                 },
                 defaultConfiguration: 'production'
+            },
+            make: {
+                executor: '@cubesoft/nx-electron:make',
+                options: {}
             }
         },
         tags: normalizedOptions.parsedTags

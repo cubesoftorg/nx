@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { copyDirectory } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
-import { ExecutorContext, parseTargetString, runExecutor, workspaceRoot } from '@nrwl/devkit';
+import { ExecutorContext, parseTargetString, readRootPackageJson, runExecutor, workspaceRoot } from '@nrwl/devkit';
 
 import { MakeExecutorSchema } from './schema';
 
@@ -26,7 +26,21 @@ export default async function executor(options: MakeExecutorSchema, context: Exe
         join(outputRoot, output.frontendProject)
     );
 
-    await build({ ...options.buildOptions, projectDir: outputRoot, config: {} });
+    const packageJson = readRootPackageJson();
+    const electronVersion =
+        packageJson.devDependencies.electron.match(/(?<version>[\d]+\.[\d]+\.[\d]+)/)?.groups?.version ?? undefined;
+
+    await build({
+        ...options.buildOptions,
+        projectDir: outputRoot,
+        universal: true,
+        config: {
+            electronVersion,
+            asar: true,
+            compression: 'maximum',
+            directories: { output: join(workspaceRoot, `dist/executables/${output.frontendProject}`) }
+        }
+    });
 
     return {
         success: true
