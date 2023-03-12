@@ -37,7 +37,7 @@ export default async function executor(options: MakeExecutorSchema, context: Exe
         config: {
             electronVersion,
             asar: true,
-            compression: 'maximum',
+            compression: 'store',
             directories: { output: join(workspaceRoot, `dist/executables/${context.projectName}`) }
         }
     });
