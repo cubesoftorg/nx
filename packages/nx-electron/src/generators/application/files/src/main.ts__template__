@@ -1,0 +1,35 @@
+import { BrowserWindow, app } from 'electron';
+
+import App from './app/app';
+import ElectronEvents from './app/events/electron.events';
+
+export default class Main {
+    static initialize(): boolean {
+        // Return if app
+        const hasSingleInstanceLock = app.requestSingleInstanceLock();
+        if (!hasSingleInstanceLock) {
+            app.quit();
+        }
+        return hasSingleInstanceLock;
+    }
+
+    static bootstrapApp() {
+        App.main(app, BrowserWindow);
+    }
+
+    static bootstrapAppEvents() {
+        ElectronEvents.bootstrapElectronEvents();
+    }
+}
+
+process.on('uncaughtException', function (err) {
+    // TODO: notify the user about an error? or let him report the error?
+    // handle the error safely
+});
+
+// handle setup events as quickly as possible
+if (Main.initialize()) {
+    // bootstrap app only if single instance lock has been aquired
+    Main.bootstrapApp();
+    Main.bootstrapAppEvents();
+}

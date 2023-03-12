@@ -1,11 +1,31 @@
-# nx-electron
+# @cubesoft/nx-electron
 
-This library was generated with [Nx](https://nx.dev).
+## Getting started
 
-## Building
+### Prerequisite
 
-Run `nx build nx-electron` to build the library.
+This module is based on Nx, you will need to set up an Nx workspace before you can use @cubesoft/nx-electron.
 
-## Running unit tests
+```shell
+npx create-nx-workspace
+```
 
-Run `nx test nx-electron` to execute the unit tests via [Jest](https://jestjs.io).
+### Installation
+
+```shell
+npm i -D @cubesoft/nx-electron
+```
+
+### Creating a nx-electron project
+
+```shell
+nx g @cubesoft/nx-electron:application <name> <frontendProject> [--dry-run]
+```
+
+### Build the app
+
+Run the command below to build your app and generate a `package.json` file with all used packages.
+
+```shell
+nx build <project> [--configuration <configuration name>] # Provide a specific build configuration
+```

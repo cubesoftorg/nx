@@ -9,8 +9,9 @@ export async function build(
     entryPoints: string[],
     outdir: string,
     tsconfig: string,
-    options?: BuildOptions,
-    bundleNodeModules = false
+    options: BuildOptions = {},
+    bundleNodeModules = false,
+    replaceValues: Record<string, string> = {}
 ) {
     return esbuild({
         ...{
@@ -28,6 +29,6 @@ export async function build(
             packages: bundleNodeModules ? undefined : 'external'
         },
         ...options,
-        plugins: [...(options?.plugins ?? []), replaceTranspileEsbuildPlugin(context)]
+        plugins: [...(options?.plugins ?? []), replaceTranspileEsbuildPlugin(context, replaceValues)]
     });
 }

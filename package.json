@@ -10,7 +10,10 @@
   },
   "private": true,
   "dependencies": {
+    "@nrwl/esbuild": "^15.8.6",
     "@swc/helpers": "~0.4.11",
+    "electron": "^23.1.3",
+    "electron-builder": "^23.6.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -33,8 +36,7 @@
     "@typescript-eslint/eslint-plugin": "5.40.1",
     "@typescript-eslint/parser": "5.40.1",
     "depcheck": "^1.4.3",
-    "esbuild": "^0.16.13",
-    "esbuild-node-externals": "^1.6.0",
+    "esbuild": "^0.17.11",
     "eslint": "8.15.0",
     "eslint-config-prettier": "8.1.0",
     "fast-glob": "^3.2.12",
