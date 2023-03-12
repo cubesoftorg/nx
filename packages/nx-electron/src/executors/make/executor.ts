@@ -38,7 +38,7 @@ export default async function executor(options: MakeExecutorSchema, context: Exe
             electronVersion,
             asar: true,
             compression: 'maximum',
-            directories: { output: join(workspaceRoot, `dist/executables/${output.frontendProject}`) }
+            directories: { output: join(workspaceRoot, `dist/executables/${context.projectName}`) }
         }
     });
 
