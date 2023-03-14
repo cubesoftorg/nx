@@ -1,12 +1,13 @@
 import { BuildOptions } from 'esbuild';
 import { join } from 'path';
 
+import { build as esbuild } from '@cubesoft/nx-shared/src/utils/build/build';
+import { resolveDependencies } from '@cubesoft/nx-shared/src/utils/build/dependencies';
+import { packageInternal } from '@cubesoft/nx-shared/src/utils/build/package-internal.esbuild';
+import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
 import { ExecutorContext, names, readJsonFile } from '@nrwl/devkit';
 
-import { build as esbuild } from '../../utils/build/build';
-import { resolveDependencies } from '../../utils/build/dependencies';
 import { deleteDirectory } from '../../utils/file-utils';
-import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '../../utils/nx/utils';
 import { BuildExecutorSchema } from './schema';
 
 interface EntrypointConfig {
@@ -28,9 +29,9 @@ export default async function buildExecuter(options: BuildExecutorSchema, contex
 }
 
 async function build(options: BuildExecutorSchema, context: ExecutorContext) {
-    const rootDir = context.root;
     const appRoot = getAbsoluteAppRoot(context);
     const outputRoot = getAbsoluteOutputRoot(context);
+    const tsConfig = join(appRoot, 'tsconfig.app.json');
 
     await deleteDirectory(outputRoot);
 
@@ -57,14 +58,14 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
             context,
             [join(appRoot, src)],
             join(outputRoot, names(entryPoint).fileName),
-            join(appRoot, 'tsconfig.app.json'),
-            esbuildOptions,
+            tsConfig,
+            { ...esbuildOptions, plugins: [await packageInternal(context, tsConfig)] },
             bundleNodeModules
         );
         await resolveDependencies(
             names(entryPoint).fileName,
-            rootDir,
-            appRoot,
+            join(outputRoot, names(entryPoint).fileName),
+            tsConfig,
             join(outputRoot, names(entryPoint).fileName)
         );
     }

@@ -13,11 +13,12 @@ interface FileReplacement {
 }
 
 export function replaceTranspileEsbuildPlugin(context: ExecutorContext, replaceValues: Record<string, string> = {}) {
+    const appRoot = getAbsoluteAppRoot(context);
+
     return {
         name: 'replace-transpile-files',
         setup: (build) => {
             build.onLoad({ filter: /\.ts$/ }, async (args) => {
-                const appRoot = getAbsoluteAppRoot(context);
                 // look in the project.json file for file replacement build configurations
                 const fileReplacements = context.target?.configurations?.[
                     context.configurationName || context.target?.defaultConfiguration

@@ -28,16 +28,25 @@ export async function resolveDependencies(
     const result = await depcheck(scanDir, {
         package: { dependencies: {}, devDependencies: {} },
         ignoreBinPackage: true,
-        ignoreMatches: tsConfigPaths,
         specials: []
     });
     const dependencies: PackageJsonDependencies = Object.keys(result.using)
-        .filter((m) => Object.keys(packageJson.dependencies).includes(m) && !ignorePackages.includes(m))
+        .filter(
+            (m) =>
+                Object.keys(packageJson.dependencies).includes(m) &&
+                !ignorePackages.includes(m) &&
+                !tsConfigPaths.includes(m)
+        )
         .sort()
         .map((d) => ({ [d]: packageJson.dependencies[d] }))
         .reduce((prev, curr) => ({ ...prev, ...curr }), {});
     const devDependencies: PackageJsonDependencies = Object.keys(result.using)
-        .filter((m) => !Object.keys(packageJson.dependencies).includes(m) && !ignorePackages.includes(m))
+        .filter(
+            (m) =>
+                !Object.keys(packageJson.dependencies).includes(m) &&
+                !ignorePackages.includes(m) &&
+                !tsConfigPaths.includes(m)
+        )
         .sort()
         .map((d) => ({ [d]: packageJson.dependencies[d] ?? packageJson.devDependencies[d] ?? '*' }))
         .reduce((prev, curr) => ({ ...prev, ...curr }), {});

@@ -15,9 +15,7 @@ import { jestProjectGenerator } from '@nrwl/jest';
 import { Linter, lintProjectGenerator } from '@nrwl/linter';
 import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
 
-import { depcheckVersion, esbuildNodeExternalsVersion, typesAwsLambdaVersion } from '../../utils/versions';
-import { addJestPlugin } from './lib/add-jest-plugin';
-import { addLinterPlugin } from './lib/add-linter-plugin';
+import { depcheckVersion, typesAwsLambdaVersion } from '../../utils/versions';
 import { NxLambdaBuildGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends NxLambdaBuildGeneratorSchema {
@@ -83,16 +81,16 @@ export default async function (tree: Tree, options: NxLambdaBuildGeneratorSchema
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
-    tasks.push(addJestPlugin(tree));
-    tasks.push(addLinterPlugin(tree));
     tasks.push(addDependencies(tree));
-    await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint });
-    await jestProjectGenerator(tree, {
-        project: options.name,
-        setupFile: 'none',
-        skipSerializers: true,
-        testEnvironment: 'node'
-    });
+    tasks.push(await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint }));
+    tasks.push(
+        await jestProjectGenerator(tree, {
+            project: options.name,
+            setupFile: 'none',
+            skipSerializers: true,
+            testEnvironment: 'node'
+        })
+    );
     await formatFiles(tree);
     return runTasksInSerial(...tasks);
 }
@@ -101,8 +99,7 @@ function addDependencies(tree: Tree) {
     const dependencies: Record<string, string> = {};
     const devDependencies: Record<string, string> = {
         '@types/aws-lambda': typesAwsLambdaVersion,
-        depcheck: depcheckVersion,
-        'esbuild-node-externals': esbuildNodeExternalsVersion
+        depcheck: depcheckVersion
     };
     return addDependenciesToPackageJson(tree, dependencies, devDependencies);
 }
