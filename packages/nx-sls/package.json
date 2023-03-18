@@ -1,6 +1,6 @@
 {
   "name": "@cubesoft/nx-sls",
-  "version": "1.46.0",
+  "version": "1.49.0",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json",
@@ -9,6 +9,7 @@
     "url": "https://github.com/cubesoftorg/nx/tree/main/packages/nx-sls"
   },
   "peerDependencies": {
-    "@nrwl/workspace": "*"
+    "@nrwl/workspace": "*",
+    "@cubesoft/nx-shared": "*"
   }
 }

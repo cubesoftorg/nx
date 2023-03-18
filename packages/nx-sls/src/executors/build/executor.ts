@@ -2,6 +2,7 @@ import glob from 'fast-glob';
 import { platform } from 'os';
 import { resolve } from 'path';
 
+import { packageInternal } from '@cubesoft/nx-shared/src/utils/build/package-internal.esbuild';
 import { ExecutorContext } from '@nrwl/devkit';
 
 import { resolveDependencies } from '../../utils/dependencies';
@@ -37,7 +38,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         copyFile(file, file.replace(appRoot, outputRoot));
     }
 
-    const { dependencies, devDependencies } = await resolveDependencies(options, context);
+    resolveDependencies(options, context);
 
     // Build all serverless handler files via esbuild
     await esbuild(
@@ -47,12 +48,12 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
             format: 'cjs',
             legalComments: 'none',
             minify: true,
-            platform: options.platform,
-            target: options.target,
-            external: [...Object.keys(dependencies), ...Object.keys(devDependencies)],
+            platform: options.platform ?? 'node',
+            target: options.target ?? 'node16',
             outdir: resolve(outputRoot, 'src/handlers/'),
             tsconfig: resolve(appRoot, options.tsConfig),
-            watch: options.watch ?? false
+            packages: 'external',
+            plugins: [await packageInternal(context, resolve(appRoot, options.tsConfig))]
         },
         context
     );
