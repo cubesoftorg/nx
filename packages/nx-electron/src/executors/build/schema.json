@@ -5,6 +5,16 @@
   "title": "Build executor",
   "description": "",
   "type": "object",
-  "properties": {},
-  "required": []
+  "properties": {
+    "frontendProject": {
+      "type": "string",
+      "description": "The name of the frontend project for the app"
+    },
+    "assets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "An array of static assets to copy to the dist folder"
+    }
+  },
+  "required": ["frontendProject"]
 }

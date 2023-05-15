@@ -1,7 +1,7 @@
 import { build } from 'electron-builder';
 import { join } from 'path';
 
-import { copyDirectory } from '@cubesoft/nx-shared/src/utils/build/file-utils';
+import { copyDirectory, deleteDirectory } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
 import { ExecutorContext, parseTargetString, readRootPackageJson, runExecutor, workspaceRoot } from '@nrwl/devkit';
 
@@ -9,6 +9,8 @@ import { MakeExecutorSchema } from './schema';
 
 export default async function executor(options: MakeExecutorSchema, context: ExecutorContext) {
     const outputRoot = getAbsoluteOutputRoot(context);
+
+    await deleteDirectory(join(workspaceRoot, `dist/executables/${context.projectName}`));
 
     const { project, target, configuration } = parseTargetString(
         `${context.projectName}:build:${context.configurationName ?? ''}`,
@@ -30,14 +32,17 @@ export default async function executor(options: MakeExecutorSchema, context: Exe
     const electronVersion =
         packageJson.devDependencies.electron.match(/(?<version>[\d]+\.[\d]+\.[\d]+)/)?.groups?.version ?? undefined;
 
+    const buildOptions = context.target?.configurations?.[context.configurationName]?.buildOptions ?? {};
+    const config = context.target?.configurations?.[context.configurationName]?.config ?? {};
+
     await build({
-        ...options.buildOptions,
+        ...buildOptions,
         projectDir: outputRoot,
-        universal: true,
         config: {
             electronVersion,
             asar: true,
             compression: 'store',
+            ...config,
             directories: { output: join(workspaceRoot, `dist/executables/${context.projectName}`) }
         }
     });

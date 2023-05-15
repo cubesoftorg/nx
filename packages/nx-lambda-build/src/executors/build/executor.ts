@@ -1,4 +1,7 @@
+import archiver from 'archiver';
+import { spawnSync } from 'child_process';
 import { BuildOptions } from 'esbuild';
+import { createWriteStream } from 'fs';
 import { join } from 'path';
 
 import { build as esbuild } from '@cubesoft/nx-shared/src/utils/build/build';
@@ -41,6 +44,7 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
     ).entrypoints;
 
     for (const entryPoint of Object.keys(entryPoints)) {
+        const outdir = join(outputRoot, names(entryPoint).fileName);
         const src =
             typeof entryPoints[entryPoint] === 'string'
                 ? (entryPoints[entryPoint] as string)
@@ -57,16 +61,39 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         await esbuild(
             context,
             [join(appRoot, src)],
-            join(outputRoot, names(entryPoint).fileName),
+            outdir,
             tsConfig,
             { ...esbuildOptions, plugins: [await packageInternal(context, tsConfig)] },
             bundleNodeModules
         );
-        await resolveDependencies(
-            names(entryPoint).fileName,
-            join(outputRoot, names(entryPoint).fileName),
-            tsConfig,
-            join(outputRoot, names(entryPoint).fileName)
-        );
+        await resolveDependencies(names(entryPoint).fileName, outdir, tsConfig, outdir);
+        if (options.installModules) {
+            const args = ['install', '--production'];
+            if (options.architecture) {
+                args.push(`--arch=${options.architecture}`);
+            }
+            if (options.platform) {
+                args.push(`--platform= ${options.platform}`);
+            }
+            spawnSync('npm', args, { cwd: outdir });
+        }
+        await new Promise<void>((resolve, reject) => {
+            const output = createWriteStream(join(outdir, `handler.zip`));
+            const archive = archiver('zip', {
+                zlib: { level: 6 }
+            });
+            archive.on('error', (error) => {
+                reject(error);
+            });
+            output.on('error', (error) => {
+                reject(error);
+            });
+            output.on('close', () => {
+                resolve();
+            });
+            archive.pipe(output);
+            archive.glob('**', { dot: true, cwd: outdir });
+            archive.finalize();
+        });
     }
 }

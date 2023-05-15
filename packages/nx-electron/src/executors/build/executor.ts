@@ -2,8 +2,9 @@ import { writeFile } from 'fs/promises';
 import { join } from 'path';
 
 import { build } from '@cubesoft/nx-shared/src/utils/build/build';
+import { copyStaticAssets } from '@cubesoft/nx-shared/src/utils/build/copy-assets';
 import { resolveDependencies } from '@cubesoft/nx-shared/src/utils/build/dependencies';
-import { readJsonFile } from '@cubesoft/nx-shared/src/utils/build/file-utils';
+import { deleteDirectory, readJsonFile } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { packageInternal } from '@cubesoft/nx-shared/src/utils/build/package-internal.esbuild';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
 import { ExecutorContext, parseTargetString, runExecutor, workspaceRoot } from '@nrwl/devkit';
@@ -19,6 +20,8 @@ export default async function executor(options: BuildExecutorSchema, context: Ex
     const apiFile = join(appRoot, 'src/app/api/preload.ts');
     const tsConfig = join(appRoot, 'tsconfig.app.json');
 
+    await deleteDirectory(outputRoot);
+
     await build(
         context,
         [mainFile, apiFile],
@@ -32,6 +35,12 @@ export default async function executor(options: BuildExecutorSchema, context: Ex
     );
     await resolveDependencies(context.projectName, outputRoot, tsConfig, outputRoot);
     await writeFile(join(outputRoot, 'index.js'), `const main = require('./main.js');`);
+
+    if (options.assets) {
+        // Get absolute asset paths for relative paths specified in options.assets
+        const assets = options.assets.map((a) => join(context.root, a));
+        await copyStaticAssets(assets, outputRoot);
+    }
 
     const { project, target, configuration } = parseTargetString(
         `${options.frontendProject}:build:${context.configurationName ?? ''}`,
