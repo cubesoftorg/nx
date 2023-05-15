@@ -1,9 +1,10 @@
 {
+  "name": "nx-cdk",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-cdk/src",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/nx-cdk",
@@ -35,14 +36,14 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["packages/nx-cdk/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/packages/nx-cdk"],
       "options": {
         "jestConfig": "packages/nx-cdk/jest.config.ts",
@@ -50,6 +51,5 @@
       }
     }
   },
-  "tags": [],
-  "name": "nx-cdk"
+  "tags": []
 }

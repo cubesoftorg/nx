@@ -1,7 +1,7 @@
-import { GeneratorCallback, NX_VERSION, Tree, addDependenciesToPackageJson } from '@nrwl/devkit';
-import { lintProjectGenerator } from '@nrwl/linter';
-import { Linter } from '@nrwl/linter/src/generators/utils/linter';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
+import { GeneratorCallback, NX_VERSION, Tree, addDependenciesToPackageJson } from '@nx/devkit';
+import { lintProjectGenerator } from '@nx/linter';
+import { Linter } from '@nx/linter/src/generators/utils/linter';
+import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 interface LintProjectOptions {
     project: string;
@@ -21,7 +21,7 @@ export async function addLinter(tree: Tree, options: LintProjectOptions): Promis
             tree,
             {},
             {
-                '@nrwl/linter': NX_VERSION
+                '@nx/linter': NX_VERSION
             }
         ),
         await lintProjectGenerator(tree, {

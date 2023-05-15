@@ -1,10 +1,11 @@
 {
+  "name": "nx-lambda-build",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-lambda-build/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
+      "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/nx-lambda-build",
@@ -36,7 +37,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -48,7 +49,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/packages/nx-lambda-build"],
       "options": {
         "jestConfig": "packages/nx-lambda-build/jest.config.ts",
@@ -56,6 +57,5 @@
       }
     }
   },
-  "tags": [],
-  "name": "nx-lambda-build"
+  "tags": []
 }

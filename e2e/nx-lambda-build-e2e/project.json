@@ -1,10 +1,11 @@
 {
+  "name": "nx-lambda-build-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "e2e/nx-lambda-build-e2e/src",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/nx-plugin:e2e",
+      "executor": "@nx/plugin:e2e",
       "options": {
         "target": "nx-lambda-build:build",
         "jestConfig": "e2e/nx-lambda-build-e2e/jest.config.ts"
@@ -12,6 +13,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["nx-lambda-build"],
-  "name": "nx-lambda-build-e2e"
+  "implicitDependencies": ["nx-lambda-build"]
 }

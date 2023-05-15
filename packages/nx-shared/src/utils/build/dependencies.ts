@@ -1,7 +1,7 @@
 import depcheck from 'depcheck';
 import { join, resolve } from 'path';
 
-import { workspaceRoot } from '@nrwl/devkit';
+import { workspaceRoot } from '@nx/devkit';
 
 import { readJsonFile, writeJsonFile } from './file-utils';
 import { getTsConfigPaths } from './tsconfig';

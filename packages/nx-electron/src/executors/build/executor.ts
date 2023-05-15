@@ -7,7 +7,7 @@ import { resolveDependencies } from '@cubesoft/nx-shared/src/utils/build/depende
 import { deleteDirectory, readJsonFile } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { packageInternal } from '@cubesoft/nx-shared/src/utils/build/package-internal.esbuild';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
-import { ExecutorContext, parseTargetString, runExecutor, workspaceRoot } from '@nrwl/devkit';
+import { ExecutorContext, parseTargetString, runExecutor, workspaceRoot } from '@nx/devkit';
 
 import { BuildExecutorSchema } from './schema';
 

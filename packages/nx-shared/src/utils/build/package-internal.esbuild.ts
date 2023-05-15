@@ -1,7 +1,7 @@
 import { Plugin } from 'esbuild';
 import { nodeModuleNameResolver, sys } from 'typescript';
 
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 
 import { getCompilerOptions, getTsConfigPaths } from './tsconfig';
 

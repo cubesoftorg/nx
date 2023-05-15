@@ -1,6 +1,6 @@
 import { BuildOptions, build as esbuild } from 'esbuild';
 
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 
 import { replaceTranspileEsbuildPlugin } from './replace-transpile.esbuild';
 

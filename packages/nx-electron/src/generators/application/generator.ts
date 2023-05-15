@@ -12,8 +12,8 @@ import {
     getWorkspaceLayout,
     names,
     offsetFromRoot
-} from '@nrwl/devkit';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
+} from '@nx/devkit';
+import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import { ApplicationGeneratorSchema } from './schema';
 

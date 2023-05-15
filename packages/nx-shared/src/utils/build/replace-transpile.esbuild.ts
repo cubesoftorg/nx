@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 import { transpileModule } from 'typescript';
 
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 
 import { getAbsoluteAppRoot } from '../nx/utils';
 import { parseTsConfig } from './tsconfig';

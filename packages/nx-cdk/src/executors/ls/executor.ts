@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nrwl/devkit';
+import { ExecutorContext } from '@nx/devkit';
 
 import { Cdk, CdkCommand } from '../../utils/cdk';
 import { getAbsoluteAppRoot } from '../../utils/nx/utils';

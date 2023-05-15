@@ -10,10 +10,10 @@ import {
     getWorkspaceLayout,
     names,
     offsetFromRoot
-} from '@nrwl/devkit';
-import { jestProjectGenerator } from '@nrwl/jest';
-import { Linter, lintProjectGenerator } from '@nrwl/linter';
-import { runTasksInSerial } from '@nrwl/workspace/src/utilities/run-tasks-in-serial';
+} from '@nx/devkit';
+import { jestProjectGenerator } from '@nx/jest';
+import { Linter, lintProjectGenerator } from '@nx/linter';
+import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import { depcheckVersion, typesAwsLambdaVersion } from '../../utils/versions';
 import { NxLambdaBuildGeneratorSchema } from './schema';

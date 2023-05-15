@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { copyDirectory, deleteDirectory } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
-import { ExecutorContext, parseTargetString, readRootPackageJson, runExecutor, workspaceRoot } from '@nrwl/devkit';
+import { ExecutorContext, parseTargetString, readRootPackageJson, runExecutor, workspaceRoot } from '@nx/devkit';
 
 import { MakeExecutorSchema } from './schema';
 

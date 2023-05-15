@@ -8,7 +8,7 @@ import { build as esbuild } from '@cubesoft/nx-shared/src/utils/build/build';
 import { resolveDependencies } from '@cubesoft/nx-shared/src/utils/build/dependencies';
 import { packageInternal } from '@cubesoft/nx-shared/src/utils/build/package-internal.esbuild';
 import { getAbsoluteAppRoot, getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
-import { ExecutorContext, names, readJsonFile } from '@nrwl/devkit';
+import { ExecutorContext, names, readJsonFile } from '@nx/devkit';
 
 import { deleteDirectory } from '../../utils/file-utils';
 import { BuildExecutorSchema } from './schema';

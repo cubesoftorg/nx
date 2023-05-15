@@ -1,6 +1,6 @@
-import { GeneratorCallback, Tree } from '@nrwl/devkit';
-import { jestProjectGenerator } from '@nrwl/jest';
-import { JestProjectSchema } from '@nrwl/jest/src/generators/jest-project/schema';
+import { GeneratorCallback, Tree } from '@nx/devkit';
+import { jestProjectGenerator } from '@nx/jest';
+import { JestProjectSchema } from '@nx/jest/src/generators/jest-project/schema';
 
 export async function addJest(tree: Tree, options: JestProjectSchema): Promise<GeneratorCallback> {
     return jestProjectGenerator(tree, {

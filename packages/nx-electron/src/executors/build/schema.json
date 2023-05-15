@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
   "version": 2,
-  "cli": "nx",
   "title": "Build executor",
   "description": "",
   "type": "object",
@@ -12,9 +11,13 @@
     },
     "assets": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "An array of static assets to copy to the dist folder"
     }
   },
-  "required": ["frontendProject"]
+  "required": [
+    "frontendProject"
+  ]
 }
