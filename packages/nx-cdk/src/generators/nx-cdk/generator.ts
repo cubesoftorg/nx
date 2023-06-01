@@ -91,7 +91,7 @@ export default async function (tree: Tree, options: NxCdkGeneratorSchema) {
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
-    tasks.push(addJestPlugin(tree));
+    tasks.push(await addJestPlugin(tree));
     tasks.push(addLinterPlugin(tree));
     tasks.push(addDependencies(tree));
     await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint });

@@ -1,10 +1,9 @@
 import { GeneratorCallback, Tree, addDependenciesToPackageJson } from '@nx/devkit';
 import { jestInitGenerator } from '@nx/jest';
-import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import { hasNxPackage, readNxVersion } from './util';
 
-export function addJestPlugin(tree: Tree): GeneratorCallback {
+export async function addJestPlugin(tree: Tree): Promise<GeneratorCallback> {
     const tasks: GeneratorCallback[] = [];
     const hasNrwlJestDependency: boolean = hasNxPackage(tree, '@nx/jest');
 
@@ -14,8 +13,5 @@ export function addJestPlugin(tree: Tree): GeneratorCallback {
         tasks.push(installTask);
     }
 
-    const jestTask = jestInitGenerator(tree, {});
-    tasks.push(jestTask);
-
-    return runTasksInSerial(...tasks);
+    return jestInitGenerator(tree, {});
 }
