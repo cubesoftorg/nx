@@ -85,7 +85,7 @@ export default async function (tree: Tree, options: ApplicationGeneratorSchema) 
     });
     addFiles(tree, normalizedOptions);
     tasks.push(await addLinter(tree, { project: normalizedOptions.projectName, skipFormat: true }));
-    tasks.push(await addJest(tree, { project: normalizedOptions.projectName, skipFormat: true }));
+    tasks.push(await addJest(tree, {}));
     tasks.push(addDependencies(tree));
     await formatFiles(tree);
     return runTasksInSerial(...tasks);

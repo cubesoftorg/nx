@@ -1,13 +1,10 @@
 import { GeneratorCallback, Tree } from '@nx/devkit';
-import { jestProjectGenerator } from '@nx/jest';
-import { JestProjectSchema } from '@nx/jest/src/generators/jest-project/schema';
+import { jestInitGenerator } from '@nx/jest';
+import { JestInitSchema } from '@nx/jest/src/generators/init/schema';
 
-export async function addJest(tree: Tree, options: JestProjectSchema): Promise<GeneratorCallback> {
-    return jestProjectGenerator(tree, {
-        setupFile: 'none',
-        skipSerializers: true,
+export async function addJest(tree: Tree, options: JestInitSchema): Promise<GeneratorCallback> {
+    return jestInitGenerator(tree, {
         testEnvironment: 'node',
-        skipFormat: true,
         ...options
     });
 }

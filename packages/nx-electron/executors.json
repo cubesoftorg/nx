@@ -10,6 +10,11 @@
       "implementation": "./src/executors/make/executor",
       "schema": "./src/executors/make/schema.json",
       "description": "make executor"
+    },
+    "serve": {
+      "implementation": "./src/executors/serve/executor",
+      "schema": "./src/executors/serve/schema.json",
+      "description": "serve executor"
     }
   }
 }

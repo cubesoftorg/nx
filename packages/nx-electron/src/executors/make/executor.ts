@@ -3,7 +3,7 @@ import { join } from 'path';
 
 import { copyDirectory, deleteDirectory } from '@cubesoft/nx-shared/src/utils/build/file-utils';
 import { getAbsoluteOutputRoot } from '@cubesoft/nx-shared/src/utils/nx/utils';
-import { ExecutorContext, parseTargetString, readRootPackageJson, runExecutor, workspaceRoot } from '@nx/devkit';
+import { ExecutorContext, parseTargetString, readJsonFile, runExecutor, workspaceRoot } from '@nx/devkit';
 
 import { MakeExecutorSchema } from './schema';
 
@@ -28,7 +28,7 @@ export default async function executor(options: MakeExecutorSchema, context: Exe
         join(outputRoot, output.frontendProject)
     );
 
-    const packageJson = readRootPackageJson();
+    const packageJson = readJsonFile(join(workspaceRoot, 'package.json'));
     const electronVersion =
         packageJson.devDependencies.electron.match(/(?<version>[\d]+\.[\d]+\.[\d]+)/)?.groups?.version ?? undefined;
 

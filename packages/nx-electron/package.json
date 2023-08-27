@@ -1,6 +1,6 @@
 {
   "name": "@cubesoft/nx-electron",
-  "version": "1.0.0",
+  "version": "1.16.0",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json",
@@ -12,5 +12,9 @@
   },
   "peerDependencies": {
     "@cubesoft/nx-shared": "*"
+  },
+  "dependencies": {
+    "@nx/devkit": "16.7.4",
+    "death": "1.1.0"
   }
 }

@@ -5,11 +5,12 @@
   "sourceRoot": "e2e/nx-cdk-e2e/src",
   "targets": {
     "e2e": {
-      "executor": "@nx/plugin:e2e",
+      "executor": "@nx/jest:jest",
       "options": {
-        "target": "nx-cdk:build",
-        "jestConfig": "e2e/nx-cdk-e2e/jest.config.js"
-      }
+        "jestConfig": "e2e/nx-cdk-e2e/jest.config.js",
+        "runInBand": true
+      },
+      "dependsOn": ["nx-cdk:build"]
     }
   },
   "tags": [],
