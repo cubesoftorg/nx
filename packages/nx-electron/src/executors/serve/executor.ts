@@ -2,6 +2,7 @@ import { ChildProcess, spawn } from 'child_process';
 import onExit from 'death';
 import { BuildOptions, BuildResult, Plugin, context as esBuildContext } from 'esbuild';
 import { writeFile } from 'fs/promises';
+import { platform } from 'os';
 import { join } from 'path';
 
 import { copyStaticAssets } from '@cubesoft/nx-shared/src/utils/build/copy-assets';
@@ -91,7 +92,7 @@ export default async function runExecutor(options: ServeExecutorSchema, context:
 
 function spawnElectron(root: string, path: string): { process: ChildProcess; restart: () => void; kill: () => void } {
     let proc: ChildProcess;
-    const executable = join(root, 'node_modules/.bin/electron');
+    const executable = join(root, `node_modules/.bin/electron${platform() === 'win32' ? '.cmd' : ''}`);
     const restart = () => {
         proc.on('close', () => {
             proc = spawn(executable, [path]);
