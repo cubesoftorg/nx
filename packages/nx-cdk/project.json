@@ -36,18 +36,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["packages/nx-cdk/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/packages/nx-cdk"],
       "options": {
-        "jestConfig": "packages/nx-cdk/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "packages/nx-cdk/jest.config.ts"
       }
     }
   },

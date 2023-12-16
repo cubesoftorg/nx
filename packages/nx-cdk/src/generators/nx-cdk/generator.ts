@@ -11,11 +11,11 @@ import {
     generateFiles,
     getWorkspaceLayout,
     names,
-    offsetFromRoot
+    offsetFromRoot,
+    runTasksInSerial
 } from '@nx/devkit';
+import { Linter, lintProjectGenerator } from '@nx/eslint';
 import { jestProjectGenerator } from '@nx/jest';
-import { Linter, lintProjectGenerator } from '@nx/linter';
-import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import {
     awsCdkLibVersion,

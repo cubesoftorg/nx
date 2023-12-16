@@ -11,9 +11,9 @@ import {
     generateFiles,
     getWorkspaceLayout,
     names,
-    offsetFromRoot
+    offsetFromRoot,
+    runTasksInSerial
 } from '@nx/devkit';
-import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
 
 import { ApplicationGeneratorSchema } from './schema';
 

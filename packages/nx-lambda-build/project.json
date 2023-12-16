@@ -33,28 +33,18 @@
             "glob": "executors.json",
             "output": "."
           }
-        ],
-        "updateBuildableProjectDepsInPackageJson": true
+        ]
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "packages/nx-lambda-build/**/*.ts",
-          "packages/nx-lambda-build/generators.json",
-          "packages/nx-lambda-build/executors.json",
-          "packages/nx-lambda-build/package.json"
-        ]
-      }
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/packages/nx-lambda-build"],
       "options": {
-        "jestConfig": "packages/nx-lambda-build/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "packages/nx-lambda-build/jest.config.ts"
       }
     }
   },

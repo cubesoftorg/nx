@@ -9,11 +9,11 @@ import {
     generateFiles,
     getWorkspaceLayout,
     names,
-    offsetFromRoot
+    offsetFromRoot,
+    runTasksInSerial
 } from '@nx/devkit';
-import { jestProjectGenerator } from '@nx/jest';
-import { Linter, lintProjectGenerator } from '@nx/linter';
-import { runTasksInSerial } from '@nx/workspace/src/utilities/run-tasks-in-serial';
+import { Linter, lintProjectGenerator } from '@nx/eslint';
+import { jestInitGenerator } from '@nx/jest';
 
 import { depcheckVersion, typesAwsLambdaVersion } from '../../utils/versions';
 import { NxLambdaBuildGeneratorSchema } from './schema';
@@ -84,10 +84,7 @@ export default async function (tree: Tree, options: NxLambdaBuildGeneratorSchema
     tasks.push(addDependencies(tree));
     tasks.push(await lintProjectGenerator(tree, { project: options.name, skipFormat: true, linter: Linter.EsLint }));
     tasks.push(
-        await jestProjectGenerator(tree, {
-            project: options.name,
-            setupFile: 'none',
-            skipSerializers: true,
+        await jestInitGenerator(tree, {
             testEnvironment: 'node'
         })
     );

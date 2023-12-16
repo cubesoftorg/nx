@@ -6,8 +6,8 @@
   "executors": "./executors.json",
   "devDependencies": {
     "esbuild": "*",
-    "@nx/linter": "*",
-    "@nx/jest": "*"
+    "@nx/jest": "*",
+    "@nx/eslint": "*"
   },
   "peerDependencies": {
     "@cubesoft/nx-shared": "*"

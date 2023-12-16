@@ -1,6 +1,6 @@
 {
   "name": "@cubesoft/nx-shared",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "main": "src/index.js",
   "generators": "./generators.json",
   "executors": "./executors.json"
