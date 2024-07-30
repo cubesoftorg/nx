@@ -2,6 +2,7 @@
   "name": "nx-cdk",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nx-cdk/src",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -36,8 +37,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -46,6 +46,5 @@
         "jestConfig": "packages/nx-cdk/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }
