@@ -2,27 +2,16 @@ import { resolve } from 'path';
 
 import { ExecutorContext } from '@nx/devkit';
 
-export function getAppRoot(context: ExecutorContext) {
+export function getAppRoot(context: ExecutorContext): string | undefined {
     if (!context.projectName) {
         throw new Error('Project name is undefined');
     }
-    return context.workspace.projects[context.projectName].root;
+    return context.projectGraph?.nodes?.[context?.projectName]?.data?.root;
 }
 
 export function getAbsoluteAppRoot(context: ExecutorContext) {
     if (!context.projectName) {
         throw new Error('Project name is undefined');
     }
-    return resolve(context.root, context.workspace.projects[context.projectName].root);
-}
-
-export function getAppSrcRoot(context: ExecutorContext) {
-    if (!context.projectName) {
-        throw new Error('Project name is undefined');
-    }
-    return context.workspace.projects[context.projectName].sourceRoot;
-}
-
-export function getAbsoluteOutputRoot(context: ExecutorContext) {
-    return resolve(context.root, 'dist', getAppRoot(context));
+    return resolve(context.root, getAppRoot(context));
 }

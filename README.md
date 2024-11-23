@@ -1,3 +1,7 @@
 # Cubesoft
 
-This project was generated using [Nx](https://nx.dev).
+## Publish new version of a package
+
+```sh
+scripts/publish-package-major.sh <package-name>
+```
