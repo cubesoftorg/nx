@@ -1,4 +1,4 @@
-const blacklistedArgs = [];
+const blacklistedArgs: string[] = [];
 
 export function parseArgs(options: Record<string, any>): string[] {
     const argsList: string[] = [];
