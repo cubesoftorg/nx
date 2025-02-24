@@ -14,6 +14,9 @@ else
 fi
 
 cd $BASEDIR/../dist/packages/$PACKAGE
-npm unpublish --force
+pnpm unpublish --force
+
+
+echo "Package $PACKAGE has been unpublished successfully."
 
 cd $PWDDIR

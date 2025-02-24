@@ -14,12 +14,12 @@ else
 fi
 
 cd $BASEDIR/../packages/$PACKAGE
-npm version minor --force
+pnpm version minor --force
 
 cd $BASEDIR/../
-npx nx build $PACKAGE
+pnpm exec nx build $PACKAGE
 
 cd $BASEDIR/../dist/packages/$PACKAGE
-npm publish --access=public
+pnpm publish --access=public --no-git-checks
 
 cd $PWDDIR

@@ -1,4 +1,5 @@
-import { CommonSpawnOptions, spawn } from 'child_process';
+import { CommonSpawnOptions } from 'child_process';
+import { spawn } from 'cross-spawn';
 
 /**
  * Execute command in a new process, with command-line arguments and options
