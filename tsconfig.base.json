@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@cubesoft/nx-cdk": ["packages/nx-cdk/src/index.ts"]
+      "@cubesoft/nx-cdk": ["packages/nx-cdk/src/index.ts"],
+      "nx-rust": ["packages/nx-rust/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

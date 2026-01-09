@@ -1,0 +1,15 @@
+# <%= className %>
+
+This is a Rust library.
+
+## Building
+
+Run `nx build <%= projectName %>` to build the library.
+
+## Testing
+
+Run `nx test <%= projectName %>` to run the tests.
+
+## Linting
+
+Run `nx lint <%= projectName %>` to lint the code with clippy.

@@ -1,0 +1,67 @@
+{
+  "version": 2,
+  "outputCapture": "direct-nodejs",
+  "$schema": "http://json-schema.org/schema",
+  "title": "Run executor",
+  "description": "Runs a Rust binary using cargo run",
+  "type": "object",
+  "properties": {
+    "toolchain": {
+      "type": "string",
+      "description": "Rust toolchain to use",
+      "enum": ["stable", "beta", "nightly"],
+      "default": "stable"
+    },
+    "target": {
+      "type": "string",
+      "description": "Build target (e.g., aarch64-apple-darwin)"
+    },
+    "profile": {
+      "type": "string",
+      "description": "Build profile (e.g., dev, release)"
+    },
+    "release": {
+      "type": "boolean",
+      "description": "Run in release mode",
+      "default": false
+    },
+    "targetDir": {
+      "type": "string",
+      "description": "Directory for all generated artifacts"
+    },
+    "features": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "Space or comma-separated list of features to activate"
+    },
+    "allFeatures": {
+      "type": "boolean",
+      "description": "Activate all available features",
+      "default": false
+    },
+    "args": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "Additional arguments to pass to cargo run"
+    }
+  },
+  "required": []
+}

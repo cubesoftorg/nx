@@ -1,0 +1,19 @@
+# <%= className %>
+
+This is a Rust binary application.
+
+## Building
+
+Run `nx build <%= projectName %>` to build the project.
+
+## Running
+
+Run `nx run <%= projectName %>` to execute the binary.
+
+## Testing
+
+Run `nx test <%= projectName %>` to run the tests.
+
+## Linting
+
+Run `nx lint <%= projectName %>` to lint the code with clippy.
