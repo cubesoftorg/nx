@@ -3,6 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "e2e/nx-lambda-build-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["nx-lambda-build"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
@@ -13,7 +15,5 @@
       },
       "dependsOn": ["nx-lambda-build:build"]
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["nx-lambda-build"]
+  }
 }

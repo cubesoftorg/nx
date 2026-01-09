@@ -3,6 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "e2e/nx-cdk-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["nx-cdk"],
   "targets": {
     "e2e": {
       "executor": "@nx/jest:jest",
@@ -13,7 +15,5 @@
       },
       "dependsOn": ["nx-cdk:build"]
     }
-  },
-  "tags": [],
-  "implicitDependencies": ["nx-cdk"]
+  }
 }
