@@ -1,15 +1,11 @@
 /**
  * Parse executor options into command line arguments
  * @param options Executor options
- * @returns Array of command line arguments
+ * @returns Object containing toolchain and args array
  */
-export function parseArgs(options: any): string[] {
+export function parseArgs(options: any): { toolchain?: string; args: string[] } {
     const args: string[] = [];
-
-    // Handle toolchain
-    if (options.toolchain) {
-        args.push(`--toolchain=${options.toolchain}`);
-    }
+    const toolchain = options.toolchain;
 
     // Handle target
     if (options.target) {
@@ -54,5 +50,5 @@ export function parseArgs(options: any): string[] {
         }
     }
 
-    return args;
+    return { toolchain, args };
 }

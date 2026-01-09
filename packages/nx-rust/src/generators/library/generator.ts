@@ -10,6 +10,7 @@ import {
     offsetFromRoot
 } from '@nx/devkit';
 
+import { ignoreRustTarget } from '../../utils/gitignore';
 import { LibraryGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends LibraryGeneratorSchema {
@@ -65,5 +66,6 @@ export default async function (tree: Tree, options: LibraryGeneratorSchema) {
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
+    ignoreRustTarget(tree);
     await formatFiles(tree);
 }

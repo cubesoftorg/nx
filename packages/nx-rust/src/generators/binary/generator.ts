@@ -10,6 +10,7 @@ import {
     offsetFromRoot
 } from '@nx/devkit';
 
+import { ignoreRustTarget } from '../../utils/gitignore';
 import { BinaryGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends BinaryGeneratorSchema {
@@ -68,5 +69,6 @@ export default async function (tree: Tree, options: BinaryGeneratorSchema) {
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
+    ignoreRustTarget(tree);
     await formatFiles(tree);
 }

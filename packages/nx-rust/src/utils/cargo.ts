@@ -18,10 +18,20 @@ export class Cargo {
         this.config = config;
     }
 
-    async run(command: CargoCommand | string, args: string[] = []) {
+    async run(command: CargoCommand | string, parsedArgs: { toolchain?: string; args: string[] }) {
+        const commandParts = command.split(' ');
+        const cargoArgs: string[] = [];
+
+        // Add toolchain using +toolchain syntax if specified
+        if (parsedArgs.toolchain) {
+            cargoArgs.push(`+${parsedArgs.toolchain}`);
+        }
+
+        cargoArgs.push(...commandParts, ...parsedArgs.args);
+
         return runCommand(
             'cargo',
-            [...command.split(' '), ...args],
+            cargoArgs,
             {
                 cwd: this.config.cwd,
                 stdio: 'inherit'
