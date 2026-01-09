@@ -1,5 +1,0 @@
-{
-  "entrypoints": {
-    "handler": "src/app/handlers/handler.ts"
-  }
-}

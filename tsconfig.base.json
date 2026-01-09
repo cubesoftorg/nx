@@ -15,10 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@cubesoft/nx-cdk": ["packages/nx-cdk/src/index.ts"],
-      "@cubesoft/nx-electron": ["packages/nx-electron/src/index.ts"],
-      "@cubesoft/nx-lambda-build": ["packages/nx-lambda-build/src/index.ts"],
-      "@cubesoft/nx-shared/*": ["packages/nx-shared/*"]
+      "@cubesoft/nx-cdk": ["packages/nx-cdk/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

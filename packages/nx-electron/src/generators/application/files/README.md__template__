@@ -1,9 +1,0 @@
-# Welcome to your nx-electron app
-
-This app is a boilerplate for building Electron applications.
-
-## Useful commands
-
-* `nx serve`        Start the electron app in watch mode
-* `nx build`        Build the electron app
-* `nx dist`         Create an executable from the electron app
