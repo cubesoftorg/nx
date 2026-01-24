@@ -33,11 +33,13 @@ npx create-nx-workspace@latest
 You also need to have [Rust and Cargo](https://www.rust-lang.org/tools/install) installed on your system:
 
 **macOS/Linux:**
+
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 **Windows (using Chocolatey):**
+
 ```bash
 choco install rust
 ```
@@ -57,6 +59,7 @@ nx g @cubesoft/nx-rust:binary <app-name>
 ```
 
 This will create a new Rust binary application in `apps/<app-name>` with:
+
 - A `Cargo.toml` manifest file
 - A `src/main.rs` entry point
 - Pre-configured Nx targets for build, test, lint, and run
@@ -68,6 +71,7 @@ nx g @cubesoft/nx-rust:library <lib-name>
 ```
 
 This will create a new Rust library in `libs/<lib-name>` with:
+
 - A `Cargo.toml` manifest file
 - A `src/lib.rs` entry point with example code and tests
 - Pre-configured Nx targets for build, test, and lint
@@ -87,6 +91,8 @@ nx g @cubesoft/nx-rust:binary my-app --directory=apps/rust --tags=rust,cli
 
 ## Working with Rust Projects
 
+All Nx Rust executors automatically use a default target directory of `dist/apps/<project-name>` for applications and `dist/libs/<project-name>` for libraries. This keeps your build artifacts organized within your Nx workspace's dist folder. You can override this default by specifying the `targetDir` option in your project.json or when running commands.
+
 ### Building
 
 ```bash
@@ -94,19 +100,22 @@ nx build <project-name>
 ```
 
 **Options:**
+
 - `--toolchain=stable|beta|nightly`: Specify Rust toolchain (default: stable)
-- `--target=<target>`: Build for specific target (e.g., aarch64-apple-darwin)
-- `--profile=<profile>`: Use specific build profile
+- `--target="<target>"`: Build for specific target (e.g., aarch64-apple-darwin)
+- `--profile="<profile>"`: Use specific build profile
 - `--release`: Build in release mode
-- `--target-dir=<dir>`: Directory for build artifacts
-- `--features=<features>`: Comma-separated list of features to activate
+- `--target-dir="<dir>"`: Directory for build artifacts
+- `--features="<features>"`: Comma-separated list of features to activate
 - `--all-features`: Activate all available features
-- `--args=<args>`: Additional arguments to pass to cargo build
+- `--args="<args>"`: Additional arguments to pass to cargo build
 
 Example:
 
 ```bash
-nx build my-app --release --features=cli,logging
+nx build my-app --release --features="cli,logging"
+nx build my-app --target="x86_64-unknown-linux-musl" --release
+nx build my-app --toolchain=nightly --all-features
 ```
 
 ### Testing
@@ -157,16 +166,18 @@ nx run my-app --release -- --custom-arg value
 
 All executors support the following optional properties:
 
-| Option | Type | Description | Default |
-|--------|------|-------------|---------|
-| `toolchain` | `'stable' \| 'beta' \| 'nightly'` | Rust toolchain to use | `stable` |
-| `target` | `string` | Build target triple | - |
-| `profile` | `string` | Build profile name | - |
-| `release` | `boolean` | Build in release mode | `false` |
-| `targetDir` | `string` | Directory for build artifacts | - |
-| `features` | `string \| string[]` | Features to activate | - |
-| `allFeatures` | `boolean` | Activate all features | `false` |
-| `args` | `string \| string[]` | Additional cargo arguments | - |
+| Option        | Type                              | Description                   | Default                                  |
+| ------------- | --------------------------------- | ----------------------------- | ---------------------------------------- |
+| `toolchain`   | `'stable' \| 'beta' \| 'nightly'` | Rust toolchain to use         | `stable`                                 |
+| `target`      | `string`                          | Build target triple           | -                                        |
+| `profile`     | `string`                          | Build profile name            | -                                        |
+| `release`     | `boolean`                         | Build in release mode         | `false`                                  |
+| `targetDir`   | `string`                          | Directory for build artifacts | `dist/apps/<name>` or `dist/libs/<name>` |
+| `features`    | `string \| string[]`              | Features to activate          | -                                        |
+| `allFeatures` | `boolean`                         | Activate all features         | `false`                                  |
+| `args`        | `string \| string[]`              | Additional cargo arguments    | -                                        |
+
+**Note:** The `targetDir` option allows you to override the default output directory. If not specified, build artifacts will be placed in `dist/apps/<project-name>` for applications or `dist/libs/<project-name>` for libraries.
 
 ## Minimal Project Structure
 

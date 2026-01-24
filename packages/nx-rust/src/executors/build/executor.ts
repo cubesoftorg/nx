@@ -23,5 +23,5 @@ async function build(options: BuildExecutorSchema, context: ExecutorContext) {
         workspaceRoot: context.root,
         cwd: getAbsoluteAppRoot(context)
     });
-    return cargo.run(CargoCommand.Build, parseArgs(options));
+    return cargo.run(CargoCommand.Build, parseArgs(options, context));
 }

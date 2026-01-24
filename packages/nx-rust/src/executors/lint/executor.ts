@@ -23,5 +23,5 @@ async function lint(options: LintExecutorSchema, context: ExecutorContext) {
         workspaceRoot: context.root,
         cwd: getAbsoluteAppRoot(context)
     });
-    return cargo.run('clippy', parseArgs(options));
+    return cargo.run('clippy', parseArgs(options, context));
 }

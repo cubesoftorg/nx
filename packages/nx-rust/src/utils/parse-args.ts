@@ -1,9 +1,15 @@
+import { ExecutorContext } from '@nx/devkit';
+import { resolve } from 'path';
+
+import { getDefaultTargetDir } from './nx/utils';
+
 /**
  * Parse executor options into command line arguments
  * @param options Executor options
+ * @param context Executor context
  * @returns Object containing toolchain and args array
  */
-export function parseArgs(options: any): { toolchain?: string; args: string[] } {
+export function parseArgs(options: any, context: ExecutorContext): { toolchain?: string; args: string[] } {
     const args: string[] = [];
     const toolchain = options.toolchain;
 
@@ -22,10 +28,10 @@ export function parseArgs(options: any): { toolchain?: string; args: string[] } 
         args.push('--release');
     }
 
-    // Handle target-dir
-    if (options.targetDir) {
-        args.push(`--target-dir=${options.targetDir}`);
-    }
+    // Handle target-dir (use default if not specified)
+    const targetDir = options.targetDir || getDefaultTargetDir(context);
+    const absoluteTargetDir = resolve(context.root, targetDir);
+    args.push(`--target-dir=${absoluteTargetDir}`);
 
     // Handle features
     if (options.features) {
