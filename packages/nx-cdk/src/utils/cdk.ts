@@ -7,6 +7,7 @@ export enum CdkCommand {
     Deploy = 'deploy',
     Destroy = 'destroy',
     Diff = 'diff',
+    Gc = 'gc --unstable=gc',
     Ls = 'ls',
     Synth = 'synth'
 }

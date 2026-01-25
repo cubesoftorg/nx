@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "outputCapture": "direct-nodejs",
+  "$schema": "http://json-schema.org/schema",
+  "title": "GC executor",
+  "description": "Run CDK garbage collection (requires --unstable=gc flag)",
+  "type": "object",
+  "properties": {},
+  "required": []
+}
