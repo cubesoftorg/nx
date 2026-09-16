@@ -14,6 +14,7 @@ Rust executors and generators for Nx.
 
 - **Generators**: Provides generators for creating Rust binaries and libraries in your Nx workspace.
 - **Executors**: Provides executors for building, testing, linting, and running Rust projects using Cargo.
+- **Project Graph**: Adds a dependency between projects for every Cargo path dependency, so `nx affected` selects the crates that depend on a changed one.
 - **Toolchain Support**: Supports stable, beta, and nightly Rust toolchains.
 - **Target Support**: Build for different targets (e.g., aarch64-apple-darwin, x86_64-unknown-linux-gnu).
 - **Profile Support**: Use custom build profiles for different optimization levels.
@@ -161,6 +162,32 @@ nx run my-app --release -- --custom-arg value
 ```
 
 > **Note:** Arguments after `--` are passed to your application, not to cargo.
+
+## Project Graph
+
+Nx does not read `Cargo.toml`, so on its own it sees no dependency between two Rust projects. `nx affected` then misses every crate that depends on a changed one, and `^` inputs and `dependsOn` entries match nothing. Register the plugin in `nx.json` to add those dependencies:
+
+```json
+{
+    "plugins": ["@cubesoft/nx-rust/plugin"]
+}
+```
+
+The plugin runs `cargo metadata --format-version=1 --no-deps` once for each cargo workspace and adds a dependency for every path dependency from a crate in one project to a crate in another:
+
+- **Every kind counts.** Normal, build and dev dependencies, including optional and target-specific ones.
+- **A crate belongs to the deepest project root containing it.** This is the same rule Nx uses for files, so a nested crate that is not a project of its own, such as `apps/api/migration`, counts as part of `apps/api`.
+- **Workspaces are found from the `Cargo.toml` at the workspace root and at each project root.** A crate excluded from the root workspace, with a `[workspace]` of its own, is read on its own.
+- **Dependencies are `static`**, with the dependent crate's `Cargo.toml` as their source file.
+
+`--no-deps` does not resolve the dependency graph, so it never reads `Cargo.lock`, the registry or the network. It takes a few tens of milliseconds per workspace.
+
+**cargo must be on `PATH`** wherever the project graph is computed, including CI steps that run `nx affected`. Without cargo, the plugin logs a warning and adds no dependencies, so Nx still works on machines that never build Rust.
+
+**Limitations:**
+
+- A `[patch]` that replaces a registry dependency with a crate in the workspace is not detected, because `--no-deps` does not apply patches.
+- Nx caches a `static` dependency against its source file. If you point an inherited `{ workspace = true }` dependency at a different crate in the root `Cargo.toml` without changing the member manifests, the old dependency remains until `nx reset`.
 
 ## Executor Options Reference
 
