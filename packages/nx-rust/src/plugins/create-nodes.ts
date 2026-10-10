@@ -57,8 +57,9 @@ export interface RustPluginOptions extends RustCacheOptions {
  *
  * - caching for every target the project already declares with one of this plugin's executors, whatever that
  *   target is called, so that a `build-release` target is covered as well as `build`;
- * - a `build`, `test`, `lint` and, for a crate with a binary, `run` target for a project that declares none of its
- *   own. A target name already taken by another executor is left alone.
+ * - a `build`, `test`, `lint` and, for a crate with a binary, `run` target for an actual Cargo package that
+ *   declares none of its own. A target name already taken by another executor is left alone. Virtual workspaces
+ *   receive caching settings only for explicitly declared Rust targets.
  *
  * Every target it adds carries a `targetDir` option, the same directory the executors default to. Cargo writes
  * there and the outputs are read from there, so the two cannot drift apart when a project overrides it.
@@ -138,10 +139,14 @@ function projectFor(
             covered.add(command);
         }
     }
-    // The conventional targets, for a project that declares none.
+    // A virtual workspace aggregates its members but is not itself a crate. Whole-workspace commands require
+    // explicit targets so they cannot duplicate or bypass each member's own test/build configuration.
+    const isPackage = packages.some(
+        (cargoPackage) => workspacePath(workspaceRoot, cargoPackage.manifest_path) === manifest
+    );
     for (const command of COMMANDS) {
         const name = targetName(command, options);
-        if (covered.has(command) || declared.targets[name] !== undefined) {
+        if (!isPackage || covered.has(command) || declared.targets[name] !== undefined) {
             continue;
         }
         if (
