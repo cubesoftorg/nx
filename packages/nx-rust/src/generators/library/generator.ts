@@ -11,6 +11,7 @@ import {
 } from '@nx/devkit';
 
 import { ignoreRustTarget } from '../../utils/gitignore';
+import { registerRustPlugin, rustTarget } from '../../utils/nx/rust-project';
 import { LibraryGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends LibraryGeneratorSchema {
@@ -53,19 +54,14 @@ export default async function (tree: Tree, options: LibraryGeneratorSchema) {
         projectType: 'library',
         sourceRoot: `${normalizedOptions.projectRoot}/src`,
         targets: {
-            build: {
-                executor: '@cubesoft/nx-rust:build'
-            },
-            test: {
-                executor: '@cubesoft/nx-rust:test'
-            },
-            lint: {
-                executor: '@cubesoft/nx-rust:lint'
-            }
+            build: rustTarget(normalizedOptions.projectName, 'library', 'build'),
+            test: rustTarget(normalizedOptions.projectName, 'library', 'test'),
+            lint: rustTarget(normalizedOptions.projectName, 'library', 'lint')
         },
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
     ignoreRustTarget(tree);
+    registerRustPlugin(tree);
     await formatFiles(tree);
 }

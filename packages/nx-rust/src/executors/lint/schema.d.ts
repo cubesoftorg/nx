@@ -1,4 +1,6 @@
-export interface LintExecutorSchema {
+import { RustCacheOptions } from '../../utils/rust-hasher';
+
+export interface LintExecutorSchema extends RustCacheOptions {
     toolchain?: 'stable' | 'beta' | 'nightly';
     target?: string;
     profile?: string;

@@ -11,12 +11,18 @@ import { spawn } from 'cross-spawn';
  */
 export async function runCommand(command: string, args: readonly string[] = [], options: CommonSpawnOptions = {}) {
     return new Promise<void>((resolvePromise, rejectPromise) => {
-        const process = spawn(command, args, {
+        const child = spawn(command, args, {
             ...options
         });
-        process.on('exit', (code) => {
-            (code || 0) > 0 ? rejectPromise(code) : resolvePromise();
+        // Wait until output streams have closed. A killed process has no exit code and must never
+        // be reported as successful (Nx would cache a failed build/test/lint).
+        child.on('close', (code, signal) => {
+            if (code === 0) {
+                resolvePromise();
+            } else {
+                rejectPromise(new Error(`${command} failed (${signal ? `signal ${signal}` : `exit code ${code}`}).`));
+            }
         });
-        process.on('error', rejectPromise);
+        child.on('error', rejectPromise);
     });
 }

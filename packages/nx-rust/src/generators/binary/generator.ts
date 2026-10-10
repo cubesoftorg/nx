@@ -11,6 +11,7 @@ import {
 } from '@nx/devkit';
 
 import { ignoreRustTarget } from '../../utils/gitignore';
+import { registerRustPlugin, rustTarget } from '../../utils/nx/rust-project';
 import { BinaryGeneratorSchema } from './schema';
 
 interface NormalizedSchema extends BinaryGeneratorSchema {
@@ -53,22 +54,15 @@ export default async function (tree: Tree, options: BinaryGeneratorSchema) {
         projectType: 'application',
         sourceRoot: `${normalizedOptions.projectRoot}/src`,
         targets: {
-            build: {
-                executor: '@cubesoft/nx-rust:build'
-            },
-            test: {
-                executor: '@cubesoft/nx-rust:test'
-            },
-            lint: {
-                executor: '@cubesoft/nx-rust:lint'
-            },
-            run: {
-                executor: '@cubesoft/nx-rust:run'
-            }
+            build: rustTarget(normalizedOptions.projectName, 'application', 'build'),
+            test: rustTarget(normalizedOptions.projectName, 'application', 'test'),
+            lint: rustTarget(normalizedOptions.projectName, 'application', 'lint'),
+            run: rustTarget(normalizedOptions.projectName, 'application', 'run')
         },
         tags: normalizedOptions.parsedTags
     });
     addFiles(tree, normalizedOptions);
     ignoreRustTarget(tree);
+    registerRustPlugin(tree);
     await formatFiles(tree);
 }

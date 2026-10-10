@@ -77,13 +77,13 @@ const FILES: Record<string, string> = {
 };
 
 const EDGES: RawProjectGraphDependency[] = [
-    { source: 'agent', target: 'shared', sourceFile: 'apps/agent/Cargo.toml', type: DependencyType.static },
-    { source: 'app', target: 'codegen', sourceFile: 'apps/app/Cargo.toml', type: DependencyType.static },
-    { source: 'app', target: 'db', sourceFile: 'apps/app/migration/Cargo.toml', type: DependencyType.static },
-    { source: 'app', target: 'helpers', sourceFile: 'apps/app/Cargo.toml', type: DependencyType.static },
-    { source: 'app', target: 'shared', sourceFile: 'apps/app/Cargo.toml', type: DependencyType.static },
-    { source: 'shared', target: 'helpers', sourceFile: 'libs/shared/Cargo.toml', type: DependencyType.static },
-    { source: 'shared', target: 'platform-win', sourceFile: 'libs/shared/Cargo.toml', type: DependencyType.static }
+    { source: 'agent', target: 'shared', type: DependencyType.implicit },
+    { source: 'app', target: 'codegen', type: DependencyType.implicit },
+    { source: 'app', target: 'db', type: DependencyType.implicit },
+    { source: 'app', target: 'helpers', type: DependencyType.implicit },
+    { source: 'app', target: 'shared', type: DependencyType.implicit },
+    { source: 'shared', target: 'helpers', type: DependencyType.implicit },
+    { source: 'shared', target: 'platform-win', type: DependencyType.implicit }
 ];
 
 let sandbox: string;
@@ -122,7 +122,8 @@ describe('createDependencies', () => {
 
         expect(vi.mocked(readCargoMetadata).mock.calls).toEqual([
             [join(workspace, 'Cargo.toml')],
-            [join(workspace, 'apps/agent/Cargo.toml')]
+            [join(workspace, 'apps/agent/Cargo.toml')],
+            [join(sandbox, 'outside/Cargo.toml')]
         ]);
     });
 
@@ -132,8 +133,7 @@ describe('createDependencies', () => {
         expect(sorted(dependencies)).toContainEqual({
             source: 'root',
             target: 'helpers',
-            sourceFile: 'crates/orphan/Cargo.toml',
-            type: DependencyType.static
+            type: DependencyType.implicit
         });
     });
 

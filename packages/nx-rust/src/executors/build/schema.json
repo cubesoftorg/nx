@@ -9,8 +9,7 @@
     "toolchain": {
       "type": "string",
       "description": "Rust toolchain to use",
-      "enum": ["stable", "beta", "nightly"],
-      "default": "stable"
+      "enum": ["stable", "beta", "nightly"]
     },
     "target": {
       "type": "string",
@@ -61,6 +60,20 @@
         }
       ],
       "description": "Additional arguments to pass to cargo build"
+    },
+    "additionalInputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional Nx file patterns for build-script resources, embedded files and test fixtures."
+    },
+    "cacheEnv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional environment variables consumed by build scripts or tests."
     }
   },
   "required": []

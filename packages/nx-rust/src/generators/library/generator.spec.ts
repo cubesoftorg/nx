@@ -1,4 +1,4 @@
-import { Tree, readProjectConfiguration } from '@nx/devkit';
+import { Tree, readNxJson, readProjectConfiguration } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 import generator from './generator';
@@ -16,5 +16,14 @@ describe('library generator', () => {
         await generator(tree, options);
         const config = readProjectConfiguration(tree, 'test');
         expect(config).toBeDefined();
+        expect(readNxJson(tree)?.plugins).toContain('@cubesoft/nx-rust/plugin');
+        for (const name of ['build', 'test', 'lint']) {
+            expect(config.targets?.[name]).toMatchObject({
+                cache: true,
+                outputs: ['{options.targetDir}'],
+                dependsOn: [],
+                options: { targetDir: `dist/libs/test/${name}` }
+            });
+        }
     });
 });

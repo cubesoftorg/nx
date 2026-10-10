@@ -1,4 +1,6 @@
-export interface RunExecutorSchema {
+import { RustCacheOptions } from '../../utils/rust-hasher';
+
+export interface RunExecutorSchema extends RustCacheOptions {
     toolchain?: 'stable' | 'beta' | 'nightly';
     target?: string;
     profile?: string;

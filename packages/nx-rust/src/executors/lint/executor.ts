@@ -1,4 +1,4 @@
-import { ExecutorContext } from '@nx/devkit';
+import { ExecutorContext, logger } from '@nx/devkit';
 
 import { Cargo } from '../../utils/cargo';
 import { getAbsoluteAppRoot } from '../../utils/nx/utils';
@@ -12,6 +12,7 @@ export default async function runExecutor(options: LintExecutorSchema, context: 
             success: true
         };
     } catch (error) {
+        logger.error(error instanceof Error ? error.message : String(error));
         return {
             success: false
         };

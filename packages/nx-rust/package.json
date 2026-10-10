@@ -1,6 +1,6 @@
 {
   "name": "@cubesoft/nx-rust",
-  "version": "0.9.0",
+  "version": "0.11.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -9,7 +9,9 @@
   "dependencies": {
     "tslib": "^2.3.0",
     "cross-spawn": "^7.0.3",
-    "@nx/devkit": "*"
+    "@nx/devkit": "*",
+    "fast-glob": "^3.3.3",
+    "smol-toml": "^1.9.1"
   },
   "devDependencies": {
     "@types/cross-spawn": "^6.0.2"

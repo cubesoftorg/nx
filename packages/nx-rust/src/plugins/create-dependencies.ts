@@ -1,20 +1,18 @@
-import { isAbsolute, join, posix, relative, sep } from 'path';
+import { join, posix } from 'path';
 
 import {
     CreateDependencies,
     CreateDependenciesContext,
     DependencyType,
     ProjectConfiguration,
-    RawProjectGraphDependency,
-    logger,
-    normalizePath
+    RawProjectGraphDependency
 } from '@nx/devkit';
 
-import { CargoPackage, readCargoMetadata } from '../utils/cargo-metadata';
+import { warnCargoMissing } from '../utils/cargo-metadata';
+import { normalizeRoot, workspacePath } from '../utils/paths';
+import { localDependencies, readRustWorkspace } from '../utils/rust-workspace';
 
 const MANIFEST = 'Cargo.toml';
-
-let warnedCargoMissing = false;
 
 /**
  * Adds a project graph edge for every Cargo path dependency from a crate in one Nx project to a crate in another, so
@@ -24,10 +22,10 @@ let warnedCargoMissing = false;
  * - A crate belongs to the deepest project root containing it, the rule Nx uses to assign files to projects. A
  *   nested crate that is not a project of its own, such as a `migration` crate, counts as part of the project
  *   around it.
- * - Every cargo workspace is read once, found from the `Cargo.toml` at the workspace root and at each project root.
- *   A crate excluded from the root workspace and given a `[workspace]` of its own is read on its own.
- * - An edge is `static`, with the dependent crate's `Cargo.toml` as its source file, so it belongs to the file that
- *   declares it.
+ * - Every tracked manifest can seed discovery, including excluded crates and crates without Nx projects.
+ *   Local patches and dependencies reached through cached registry metadata count too.
+ * - Edges are implicit and recomputed, so inherited dependencies and patches can change independently of
+ *   the member manifest without retaining stale static edges in Nx's file cache.
  *
  * Without cargo on PATH this logs a warning and adds no edges, rather than failing every Nx command on a machine
  * that never builds Rust.
@@ -36,58 +34,42 @@ export const createDependencies: CreateDependencies = (_options, context) => {
     const manifests = findManifests(context);
     const projectOf = projectResolver(context.projects);
 
-    const packages = new Map<string, CargoPackage>();
-    const read = new Set<string>();
-    for (const seed of workspaceSeeds(manifests, context.projects)) {
-        if (read.has(seed)) {
-            continue;
-        }
-        const metadata = readCargoMetadata(join(context.workspaceRoot, seed));
-        if (!metadata) {
-            warnCargoMissing();
-            return [];
-        }
-        read.add(seed);
-        for (const cargoPackage of metadata.packages) {
-            const manifest = workspacePath(context.workspaceRoot, cargoPackage.manifest_path);
-            if (manifest !== null && !packages.has(manifest)) {
-                packages.set(manifest, cargoPackage);
-                read.add(manifest);
-            }
-        }
+    const workspace = readRustWorkspace(
+        [...manifests.keys()]
+            .sort((a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b))
+            .map((manifest) => join(context.workspaceRoot, manifest))
+    );
+    if (workspace === null) {
+        warnCargoMissing('the project graph has no edges between Rust crates.');
+        return [];
     }
-
     const dependencies: RawProjectGraphDependency[] = [];
     const added = new Set<string>();
-    for (const [manifest, cargoPackage] of packages) {
-        const source = projectOf(posix.dirname(manifest));
-        if (source === undefined) {
-            continue;
-        }
-        // A static dependency must name a file Nx assigns to its source project. A manifest Nx does not track
-        // (ignored, say) still declares the dependency, so it becomes implicit rather than being dropped.
-        const tracked = manifests.get(manifest) === source;
-
-        for (const dependency of cargoPackage.dependencies) {
-            if (dependency.path === undefined) {
-                continue;
-            }
-            const directory = workspacePath(context.workspaceRoot, dependency.path);
+    for (const [manifest, pkg] of workspace.packages) {
+        const path = workspacePath(context.workspaceRoot, manifest);
+        const source = path === null ? undefined : projectOf(posix.dirname(path));
+        if (source === undefined) continue;
+        const pending = localDependencies(pkg, workspace);
+        const visited = new Set<string>();
+        while (pending.length > 0) {
+            const dependency = pending.pop()!;
+            if (visited.has(dependency)) continue;
+            visited.add(dependency);
+            const directory = workspacePath(context.workspaceRoot, posix.dirname(dependency));
             const target = directory === null ? undefined : projectOf(directory);
-            if (target === undefined || target === source) {
-                continue;
+            if (target && target !== source) {
+                const key = `${source}\0${target}`;
+                if (!added.has(key)) {
+                    added.add(key);
+                    // Nx caches static edges by the member manifest alone. Inherited workspace
+                    // dependencies and patches can change without that file changing; recompute them.
+                    dependencies.push({ source, target, type: DependencyType.implicit });
+                }
+            } else {
+                // Bridge through crates with no Nx project (or crates inside the same project).
+                const next = workspace.packages.get(dependency);
+                if (next) pending.push(...localDependencies(next, workspace));
             }
-
-            const key = tracked ? `${manifest}\0${target}` : `${source}\0${target}`;
-            if (added.has(key)) {
-                continue;
-            }
-            added.add(key);
-            dependencies.push(
-                tracked
-                    ? { source, target, sourceFile: manifest, type: DependencyType.static }
-                    : { source, target, type: DependencyType.implicit }
-            );
         }
     }
     return dependencies;
@@ -115,17 +97,6 @@ function isManifest(file: string): boolean {
     return file === MANIFEST || file.endsWith(`/${MANIFEST}`);
 }
 
-/** The manifests to start reading workspaces from: the workspace root's, then each project root's, shallowest first. */
-function workspaceSeeds(
-    manifests: Map<string, string | null>,
-    projects: Record<string, ProjectConfiguration>
-): string[] {
-    const roots = new Set(['.', ...Object.values(projects).map((project) => normalizeRoot(project.root))]);
-    return [...manifests.keys()]
-        .filter((manifest) => roots.has(posix.dirname(manifest)))
-        .sort((a, b) => a.split('/').length - b.split('/').length || a.localeCompare(b));
-}
-
 /** Finds the project owning a workspace-relative directory: the one with the deepest root containing it. */
 function projectResolver(projects: Record<string, ProjectConfiguration>): (directory: string) => string | undefined {
     const byRoot = new Map<string, string>();
@@ -140,38 +111,4 @@ function projectResolver(projects: Record<string, ProjectConfiguration>): (direc
             }
         }
     };
-}
-
-function normalizeRoot(root: string): string {
-    const normalized = normalizePath(root).replace(/^\.\//, '').replace(/\/+$/, '');
-    return normalized === '' ? '.' : normalized;
-}
-
-/**
- * Converts an absolute path reported by cargo to a workspace-relative one with forward slashes, or `null` when it
- * lies outside the workspace.
- *
- * A plain `relative` is enough: cargo builds the paths it reports from the manifest path it was given, without
- * resolving symlinks, and that path starts with the workspace root.
- */
-function workspacePath(workspaceRoot: string, absolutePath: string): string | null {
-    const path = relative(workspaceRoot, absolutePath);
-    if (path === '') {
-        return '.';
-    }
-    if (isAbsolute(path) || path === '..' || path.startsWith(`..${sep}`)) {
-        return null;
-    }
-    return normalizePath(path);
-}
-
-function warnCargoMissing() {
-    if (warnedCargoMissing) {
-        return;
-    }
-    warnedCargoMissing = true;
-    logger.warn(
-        '@cubesoft/nx-rust: cargo is not on PATH, so the project graph has no edges between Rust crates, and ' +
-            '`nx affected` will not select the crates that depend on a changed one.'
-    );
 }

@@ -1,4 +1,6 @@
-export interface TestExecutorSchema {
+import { RustCacheOptions } from '../../utils/rust-hasher';
+
+export interface TestExecutorSchema extends RustCacheOptions {
     toolchain?: 'stable' | 'beta' | 'nightly';
     target?: string;
     profile?: string;
