@@ -174,7 +174,9 @@ Newly generated Rust projects register the plugin automatically. For existing pr
 }
 ```
 
-The plugin adds build, test and lint targets to existing Nx projects with a `Cargo.toml` beside their `project.json` or `package.json`. It also supplies caching settings for declared targets using these executors, including custom names such as `build-release`. Binary crates get an uncached run target. Explicit project settings take precedence over inferred settings.
+The plugin adds build, test and lint targets to existing Nx projects whose `Cargo.toml` declares a Cargo package and sits beside their `project.json` or `package.json`. It also supplies caching settings for declared targets using these executors, including custom names such as `build-release`. Binary crates get an uncached run target. Explicit project settings take precedence over inferred settings.
+
+A virtual Cargo workspace (a manifest with `[workspace]` and no `[package]`) receives no automatically inferred targets, including at the Nx workspace root. Its manifests, lockfiles and dependencies still contribute to member crates' inputs and dependency discovery. To run whole-workspace Cargo commands, explicitly declare targets using the Rust executors; the plugin supplies their caching settings without adding other targets. Roots declaring both `[package]` and `[workspace]` still receive the usual crate targets.
 
 ### Cargo dependencies
 

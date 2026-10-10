@@ -30,6 +30,7 @@ const project = (configuration: Partial<ProjectConfiguration>) => JSON.stringify
 
 const FILES: Record<string, string> = {
     'Cargo.toml': '[workspace]\nresolver = "2"\nmembers = ["apps/app", "apps/app/migration", "libs/*"]\n',
+    'package.json': JSON.stringify({ name: '@test/source', private: true, nx: { includedScripts: [] } }),
 
     // A binary application with no targets of its own.
     'apps/app/Cargo.toml': crate('app', '[dependencies]\nshared = { path = "../../libs/shared" }\n'),
@@ -92,6 +93,82 @@ beforeEach(() => {
 });
 
 describe('createNodesV2', () => {
+    it('does not infer whole-workspace targets for a virtual Cargo workspace root', async () => {
+        const results = await createNodes(workspace);
+
+        expect(results.find(([manifest]) => manifest === 'Cargo.toml')).toBeUndefined();
+        const app = await targetsFor(workspace, 'apps/app');
+        expect(Object.keys(app).sort()).toEqual(['build', 'lint', 'run', 'test']);
+        expect(app['test'].inputs).toContain('{workspaceRoot}/Cargo.lock');
+        expect(app['build'].inputs).toContain('{workspaceRoot}/libs/shared/**/*.rs');
+    });
+
+    it('does not infer targets for nested virtual workspaces either', async () => {
+        const nested = join(sandbox, 'virtual-nested');
+        writeFiles(nested, {
+            'apps/group/Cargo.toml': '[workspace]\nresolver = "2"\nmembers = ["worker"]\n',
+            'apps/group/project.json': project({ name: 'group' }),
+            'apps/group/worker/Cargo.toml': crate('worker'),
+            'apps/group/worker/src/main.rs': 'fn main() {}\n',
+            'apps/group/worker/project.json': project({ name: 'worker', projectType: 'application' })
+        });
+
+        const results = await createNodes(nested);
+        expect(results.map(([manifest]) => manifest)).toEqual(['apps/group/worker/Cargo.toml']);
+        const worker = await targetsFor(nested, 'apps/group/worker');
+        expect(Object.keys(worker).sort()).toEqual(['build', 'lint', 'run', 'test']);
+        expect(worker['test'].inputs).toContain('{workspaceRoot}/apps/group/Cargo.lock');
+    });
+
+    it('infers targets when the workspace root is also an actual Cargo package', async () => {
+        const packaged = join(sandbox, 'packaged-root');
+        writeFiles(packaged, {
+            ...FILES,
+            'Cargo.toml': crate('root-package') + FILES['Cargo.toml'],
+            'src/main.rs': 'fn main() {}\n'
+        });
+
+        const results = await createNodes(packaged);
+        const targets = results.find(([manifest]) => manifest === 'Cargo.toml')?.[1].projects?.['.']?.targets;
+        expect(Object.keys(targets ?? {}).sort()).toEqual(['build', 'lint', 'run', 'test']);
+        expect(targets?.['build']).toMatchObject({ executor: '@cubesoft/nx-rust:build', cache: true });
+        expect(targets?.['test'].inputs).toContain('{workspaceRoot}/Cargo.lock');
+    });
+
+    it('caches explicit whole-workspace Rust targets without inferring more targets', async () => {
+        const explicit = join(sandbox, 'explicit-root');
+        writeFiles(explicit, {
+            ...FILES,
+            'package.json': JSON.stringify({
+                name: '@test/source',
+                nx: {
+                    targets: {
+                        'workspace-build': { executor: '@cubesoft/nx-rust:build', options: { args: ['--workspace'] } },
+                        'workspace-test': { executor: '@cubesoft/nx-rust:test' },
+                        'workspace-lint': { executor: '@cubesoft/nx-rust:lint' },
+                        'workspace-run': { executor: '@cubesoft/nx-rust:run' }
+                    }
+                }
+            })
+        });
+
+        const results = await createNodes(explicit);
+        const targets = results.find(([manifest]) => manifest === 'Cargo.toml')?.[1].projects?.['.']?.targets;
+        expect(Object.keys(targets ?? {}).sort()).toEqual([
+            'workspace-build',
+            'workspace-lint',
+            'workspace-run',
+            'workspace-test'
+        ]);
+        for (const name of ['workspace-build', 'workspace-test', 'workspace-lint']) {
+            expect(targets?.[name]).toMatchObject({ cache: true, outputs: ['{options.targetDir}'] });
+            expect(targets?.[name].inputs).toContain('{workspaceRoot}/apps/app/**/*.rs');
+            expect(targets?.[name].inputs).toContain('{workspaceRoot}/libs/shared/**/*.rs');
+            expect(targets?.[name]).not.toHaveProperty('executor');
+        }
+        expect(targets?.['workspace-run']).toMatchObject({ cache: false });
+    });
+
     it('adds the conventional targets to a project that declares none', async () => {
         const app = await targetsFor(workspace, 'apps/app');
 
@@ -209,7 +286,7 @@ describe('createNodesV2', () => {
     it('reads each cargo workspace once', async () => {
         await createNodes(workspace);
 
-        expect(vi.mocked(readCargoMetadata).mock.calls).toEqual([[join(workspace, 'apps/app/Cargo.toml')]]);
+        expect(vi.mocked(readCargoMetadata).mock.calls).toEqual([[join(workspace, 'Cargo.toml')]]);
     });
 
     it('names targets as the plugin options ask', async () => {
